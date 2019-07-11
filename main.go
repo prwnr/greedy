@@ -9,11 +9,14 @@ import (
 
 func main() {
 	size := flag.Int("size", 10, "Size of each map for current game.")
+	flag.Parse()
 
 	h := hero.Bee{}
-	h.Start(2, 4)
-	m := board.NewMap(size)
-	m.Display(&h)
+	h.Start((*size/2)-1, *size-1)
+	m := board.NewMap(*size)
+	board.Move(&h, &m, "init")
+
+	m.Display()
 	var move string
 
 	for {
@@ -25,7 +28,7 @@ func main() {
 			continue
 		}
 
-		h.Move(move)
-		m.Display(&h)
+		board.Move(&h, &m, move)
+		m.Display()
 	}
 }
