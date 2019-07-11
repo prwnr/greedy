@@ -7,19 +7,13 @@ import (
 
 //Map of the game
 type Map struct {
-	Fields [5][5]string
+	Fields [][]string
 }
 
 //NewMap creates new game Map with first position
-func NewMap() Map {
+func NewMap(size int) Map {
 	m := Map{}
-	m.Fields = [5][5]string{
-		{"_", "_", "_", "_", "_"},
-		{"_", "_", "_", "_", "_"},
-		{"_", "_", "_", "_", "_"},
-		{"_", "_", "_", "_", "_"},
-		{"_", "_", "_", "_", "_"},
-	}
+	m.build(size)
 
 	return m
 }
@@ -43,5 +37,16 @@ func (m *Map) Display(b *hero.Bee) {
 
 	for _, s := range m.Fields {
 		fmt.Println(s)
+	}
+}
+
+func (m *Map) build(size int) {
+	for i := 0; i < size; i++ {
+		tmp := make([]string, 0)
+		for j := 0; j < size; j++ {
+			tmp = append(tmp, "_")
+		}
+		m.Fields = append(m.Fields, tmp)
+
 	}
 }

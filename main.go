@@ -1,15 +1,18 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"swarm/board"
 	"swarm/hero"
 )
 
 func main() {
+	size := flag.Int("size", 10, "Size of each map for current game.")
+
 	h := hero.Bee{}
 	h.Start(2, 4)
-	m := board.NewMap()
+	m := board.NewMap(size)
 	m.Display(&h)
 	var move string
 
