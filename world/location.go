@@ -18,8 +18,8 @@ func NewLocation(size int) Location {
 	return l
 }
 
-// Display current positions on Location
-func (l *Location) Display() {
+// Render current positions on Location
+func (l *Location) Render() {
 	for _, s := range l.Fields {
 		fmt.Println(s)
 	}

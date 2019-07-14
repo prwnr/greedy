@@ -1,13 +1,13 @@
 package world
 
 import (
-	"swarm/hero"
+	"swarm/player"
 	"testing"
 )
 
 func TestMovesHeroOnLocation(t *testing.T) {
 	m := NewLocation(4)
-	h := hero.Bee{}
+	h := player.Hero{}
 	h.Start(0, 0)
 
 	Move(&h, &m, MoveRight)
@@ -23,7 +23,7 @@ func TestMovesHeroOnLocation(t *testing.T) {
 
 func TestWontMoveHeroOutsideLocation(t *testing.T) {
 	l := NewLocation(4)
-	h := hero.Bee{}
+	h := hero.Hero{}
 	h.Start(0, 0)
 
 	Move(&h, &l, MoveUp)

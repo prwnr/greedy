@@ -1,6 +1,6 @@
 package world
 
-import "swarm/hero"
+import "swarm/player"
 
 const (
 	//MoveUp key
@@ -14,7 +14,7 @@ const (
 )
 
 // Move changes hero position
-func Move(b *hero.Bee, l *Location, direction string) {
+func Move(b *player.Hero, l *Location, direction string) {
 	l.Fields[b.Position.Y][b.Position.X] = "_"
 
 	switch direction {

@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"swarm/hero"
+	"swarm/player"
 	"swarm/world"
 )
 
@@ -11,12 +11,12 @@ func main() {
 	size := flag.Int("size", 10, "Size of each map for current game.")
 	flag.Parse()
 
-	h := hero.Bee{}
+	h := player.Hero{}
 	h.Start((*size/2)-1, *size-1)
 	l := world.NewLocation(*size)
 	world.Move(&h, &l, "init")
 
-	l.Display()
+	l.Render()
 	var move string
 
 	for {
@@ -29,6 +29,6 @@ func main() {
 		}
 
 		world.Move(&h, &l, move)
-		l.Display()
+		l.Render()
 	}
 }

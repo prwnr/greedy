@@ -1,12 +1,12 @@
-package hero
+package player
 
-// Bee a newborn hero
-type Bee struct {
+// Hero a newborn hero
+type Hero struct {
 	Position Position
 }
 
 // Start sets starting position of a hero
-func (b *Bee) Start(x, y int) {
+func (b *Hero) Start(x, y int) {
 	b.Position.X = x
 	b.Position.Y = y
 }
