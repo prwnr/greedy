@@ -3,8 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
-	"swarm/board"
 	"swarm/hero"
+	"swarm/world"
 )
 
 func main() {
@@ -13,10 +13,10 @@ func main() {
 
 	h := hero.Bee{}
 	h.Start((*size/2)-1, *size-1)
-	m := board.NewMap(*size)
-	board.Move(&h, &m, "init")
+	l := world.NewLocation(*size)
+	world.Move(&h, &l, "init")
 
-	m.Display()
+	l.Display()
 	var move string
 
 	for {
@@ -28,7 +28,7 @@ func main() {
 			continue
 		}
 
-		board.Move(&h, &m, move)
-		m.Display()
+		world.Move(&h, &l, move)
+		l.Display()
 	}
 }

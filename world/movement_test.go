@@ -1,12 +1,12 @@
-package board
+package world
 
 import (
 	"swarm/hero"
 	"testing"
 )
 
-func TestMovesHeroOnMap(t *testing.T) {
-	m := NewMap(4)
+func TestMovesHeroOnLocation(t *testing.T) {
+	m := NewLocation(4)
 	h := hero.Bee{}
 	h.Start(0, 0)
 
@@ -21,17 +21,17 @@ func TestMovesHeroOnMap(t *testing.T) {
 	}
 }
 
-func TestWontMoveHeroOutsideMap(t *testing.T) {
-	m := NewMap(4)
+func TestWontMoveHeroOutsideLocation(t *testing.T) {
+	l := NewLocation(4)
 	h := hero.Bee{}
 	h.Start(0, 0)
 
-	Move(&h, &m, MoveUp)
+	Move(&h, &l, MoveUp)
 	if h.Position.Y != 0 {
 		t.Errorf("hero Y position should be 0, was %d", h.Position.Y)
 	}
 
-	Move(&h, &m, MoveLeft)
+	Move(&h, &l, MoveLeft)
 	if h.Position.X != 0 {
 		t.Errorf("hero X position should be 1, was %d", h.Position.X)
 	}

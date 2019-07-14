@@ -1,4 +1,4 @@
-package board
+package world
 
 import "swarm/hero"
 
@@ -14,8 +14,8 @@ const (
 )
 
 // Move changes hero position
-func Move(b *hero.Bee, m *Map, direction string) {
-	m.Fields[b.Position.Y][b.Position.X] = "_"
+func Move(b *hero.Bee, l *Location, direction string) {
+	l.Fields[b.Position.Y][b.Position.X] = "_"
 
 	switch direction {
 	case MoveUp:
@@ -23,7 +23,7 @@ func Move(b *hero.Bee, m *Map, direction string) {
 			b.Position.Y--
 		}
 	case MoveDown:
-		if b.Position.Y < m.Size-1 {
+		if b.Position.Y < l.Size-1 {
 			b.Position.Y++
 		}
 	case MoveLeft:
@@ -31,10 +31,10 @@ func Move(b *hero.Bee, m *Map, direction string) {
 			b.Position.X--
 		}
 	case MoveRight:
-		if b.Position.X < m.Size-1 {
+		if b.Position.X < l.Size-1 {
 			b.Position.X++
 		}
 	}
 
-	m.Fields[b.Position.Y][b.Position.X] = "*"
+	l.Fields[b.Position.Y][b.Position.X] = "*"
 }

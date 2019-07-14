@@ -1,9 +1,9 @@
-package board
+package world
 
 import "testing"
 
-func TestMapCreation(t *testing.T) {
-	got := NewMap(2)
+func TestLocationCreation(t *testing.T) {
+	got := NewLocation(2)
 
 	if len(got.Fields) != 2 {
 		t.Errorf("got %v elements, want 2", got)
