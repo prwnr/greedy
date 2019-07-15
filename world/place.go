@@ -4,34 +4,28 @@ import "swarm/player"
 
 // Place is a single element on a Location
 type Place struct {
-	avatars []player.Avatar
+	hero *player.Hero
 }
 
-// AddAvatar puts a new Avatar on a Place
-func (p *Place) AddAvatar(a player.Avatar) {
-	p.avatars = append(p.avatars, a)
+// SetHero puts a Hero on a Place
+func (p *Place) SetHero(h *player.Hero) {
+	p.hero = h
 }
 
-// RemoveAvatars resets Place
-func (p *Place) RemoveAvatars() {
-	p.avatars = []player.Avatar{}
+// RemoveHero removes Hero from current place
+func (p *Place) RemoveHero() {
+	p.hero = nil
 }
 
-// GetAvatars returns who stands on Place
-func (p *Place) GetAvatars() []player.Avatar {
-	return p.avatars
+// GetHero returns stands on Place
+func (p *Place) GetHero() *player.Hero {
+	return p.hero
 }
 
 // Render Place look
 func (p *Place) Render() string {
-	if len(p.avatars) == 0 {
+	if p.hero == nil {
 		return "_"
 	}
-
-	var place string
-	for _, a := range p.avatars {
-		place += a.RenderLook()
-	}
-
-	return place
+	return p.hero.RenderLook()
 }

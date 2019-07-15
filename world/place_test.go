@@ -6,47 +6,45 @@ import (
 	"testing"
 )
 
-func TestPlaceAvatars(t *testing.T) {
-	t.Run("can set new Avatar on place", func(t *testing.T) {
+func TestPlaceHero(t *testing.T) {
+	t.Run("can set new Hero on place", func(t *testing.T) {
 		p := Place{}
-		h := player.Hero{}
+		h := &player.Hero{}
 
-		p.AddAvatar(h)
+		p.SetHero(h)
 
-		got := len(p.GetAvatars())
-		if got != 1 {
-			t.Errorf("expected 1 avatar, got %d", got)
+		if p.GetHero() == nil {
+			t.Error("expected a hero, got nil")
 		}
 	})
 
-	t.Run("can remove all Avatars from place", func(t *testing.T) {
+	t.Run("can remove all Hero from place", func(t *testing.T) {
 		p := Place{}
-		h := player.Hero{}
+		h := &player.Hero{}
 
-		p.AddAvatar(h)
-		p.RemoveAvatars()
+		p.SetHero(h)
+		p.RemoveHero()
 
-		got := len(p.GetAvatars())
-		if got != 0 {
-			t.Errorf("expected 0 avatars, got %d", got)
+		if p.GetHero() != nil {
+			t.Error("expected no hero, got one")
 		}
 	})
 }
 
 func TestPlaceRendering(t *testing.T) {
-	t.Run("can render Avatars from place", func(t *testing.T) {
+	t.Run("can render Hero from place", func(t *testing.T) {
 		p := Place{}
-		h := player.Hero{}
+		h := &player.Hero{}
 
-		p.AddAvatar(h)
+		p.SetHero(h)
 
 		got := p.Render()
 		if strings.Compare(got, "*") != 0 {
-			t.Errorf("expected to have '*' Avatar rendered, got %s", got)
+			t.Errorf("expected to have '*' Hero rendered, got %s", got)
 		}
 	})
 
-	t.Run("renders empy place when there are no Avatars", func(t *testing.T) {
+	t.Run("renders empy place when there are no Heroes", func(t *testing.T) {
 		p := Place{}
 
 		got := p.Render()

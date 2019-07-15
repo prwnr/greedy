@@ -27,9 +27,9 @@ func TestMovingHeroToNewLocationRemovesHimFromOld(t *testing.T) {
 	h.Start(0, 0)
 
 	Move(&h, &m, MoveRight)
-	got := len(m.Places[0][0].GetAvatars())
-	if got != 0 {
-		t.Errorf("number of avatars on old place should be 0, got %d", got)
+	got := m.Places[0][0].GetHero()
+	if got != nil {
+		t.Error("there should be no here on this place, got one")
 	}
 }
 

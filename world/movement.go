@@ -15,7 +15,7 @@ const (
 
 // Move changes hero position
 func Move(b *player.Hero, l *Location, direction string) {
-	l.Places[b.Position.Y][b.Position.X].RemoveAvatars()
+	l.Places[b.Position.Y][b.Position.X].RemoveHero()
 
 	switch direction {
 	case MoveUp:
@@ -36,5 +36,5 @@ func Move(b *player.Hero, l *Location, direction string) {
 		}
 	}
 
-	l.Places[b.Position.Y][b.Position.X].AddAvatar(b)
+	l.Places[b.Position.Y][b.Position.X].SetHero(b)
 }
