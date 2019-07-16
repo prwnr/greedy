@@ -2,6 +2,9 @@ package world
 
 import (
 	"fmt"
+	"math/rand"
+	"swarm/npc"
+	"time"
 )
 
 //Location of the game
@@ -37,12 +40,40 @@ func (l *Location) Render() {
 }
 
 func (l *Location) build() {
+	notX := (l.Size / 2) - 1
+	notY := l.Size - 1
+
+	monsters := int(l.Size / 3)
+
+	posX := randomNumber(l.Size, notX)
+	posY := randomNumber(l.Size, notY)
+
 	for i := 0; i < l.Size; i++ {
-		p := Place{}
 		tmp := make([]Place, 0)
 		for j := 0; j < l.Size; j++ {
+			p := Place{}
+			if i == posX && j == posY {
+				p.AddMonster(npc.NewMonster())
+				if monsters > 0 {
+					posX = randomNumber(l.Size, notX)
+					posY = randomNumber(l.Size, notY)
+					monsters--
+				}
+			}
 			tmp = append(tmp, p)
 		}
 		l.Places = append(l.Places, tmp)
 	}
+}
+
+func randomNumber(max, not int) int {
+	s := rand.NewSource(time.Now().UnixNano())
+	r := rand.New(s)
+
+	n := r.Intn(max)
+	if n != not {
+		return n
+	}
+
+	return randomNumber(max, not)
 }

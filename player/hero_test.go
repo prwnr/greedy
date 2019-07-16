@@ -17,7 +17,7 @@ func TestSetsStartingHeroPosition(t *testing.T) {
 func TestShowsHeroLook(t *testing.T) {
 	h := Hero{}
 
-	got := h.RenderLook()
+	got := h.Render()
 	if strings.Compare(got, "*") != 0 {
 		t.Errorf("got '%s', expected '*'", got)
 	}
