@@ -7,8 +7,8 @@ import (
 
 // Place is a single element on a Location
 type Place struct {
-	hero     *player.Hero
-	monsters []npc.Monster
+	hero    *player.Hero
+	monster *npc.Monster
 }
 
 // SetHero puts a Hero on a Place
@@ -18,12 +18,12 @@ func (p *Place) SetHero(h *player.Hero) {
 
 // AddMonster to a place
 func (p *Place) AddMonster(m *npc.Monster) {
-	p.monsters = append(p.monsters, *m)
+	p.monster = m
 }
 
 // IsOccupied checks if place is occupied by monsters
 func (p *Place) IsOccupied() bool {
-	return len(p.monsters) > 0
+	return p.monster != nil
 }
 
 // RemoveHero removes Hero from current place
@@ -36,6 +36,15 @@ func (p *Place) GetHero() *player.Hero {
 	return p.hero
 }
 
+// GetMonster returns monster from the place
+func (p *Place) GetMonster() *npc.Monster {
+	if p.monster == nil {
+		return nil
+	}
+
+	return p.monster
+}
+
 // Render Place look
 func (p *Place) Render() string {
 	var look string
@@ -43,10 +52,8 @@ func (p *Place) Render() string {
 		look += p.hero.Render()
 	}
 
-	if len(p.monsters) > 0 {
-		for _, m := range p.monsters {
-			look += m.Render()
-		}
+	if p.monster != nil && p.monster.IsAlive() {
+		look += p.monster.Render()
 	}
 
 	if look != "" {

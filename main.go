@@ -11,8 +11,8 @@ func main() {
 	size := flag.Int("size", 10, "Size of each map for current game.")
 	flag.Parse()
 
-	h := &player.Hero{}
-	h.Start((*size/2)-1, *size-1)
+	h := player.NewHero()
+	h.StartingPosition((*size/2)-1, *size-1)
 	l := world.NewLocation(*size)
 	world.Move(h, &l, "init")
 
