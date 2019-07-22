@@ -1,16 +1,17 @@
 package world
 
 import (
-	"fmt"
-	"math/rand"
+	"strings"
+	"swarm/common"
 	"swarm/npc"
-	"time"
+	"termui/v3/widgets"
 )
 
 //Location of the game
 type Location struct {
-	Size   int
-	Places [][]Place
+	Size      int
+	Places    [][]Place
+	presenter *widgets.Paragraph
 }
 
 //NewLocation creates new game Map with places
@@ -21,8 +22,25 @@ func NewLocation(size int) Location {
 	return l
 }
 
-// Render current positions on Location
-func (l *Location) Render() {
+// Create location
+func (l *Location) Create() *widgets.Paragraph {
+	p := widgets.NewParagraph()
+	p.Title = "Current location"
+	p.Text = l.RenderPlaces()
+	p.SetRect(10, 0, 32, 12)
+
+	l.presenter = p
+
+	return p
+}
+
+// Update location
+func (l *Location) Update() {
+	l.presenter.Text = l.RenderPlaces()
+}
+
+// RenderPlaces on Location
+func (l *Location) RenderPlaces() string {
 	loc := make([][]string, l.Size)
 	for i := 0; i < l.Size; i++ {
 		loc[i] = make([]string, l.Size)
@@ -34,9 +52,12 @@ func (l *Location) Render() {
 		}
 	}
 
+	var render string
 	for _, l := range loc {
-		fmt.Println(l)
+		render += strings.Join(l, " ") + "\r\n"
 	}
+
+	return render
 }
 
 func (l *Location) build() {
@@ -45,8 +66,8 @@ func (l *Location) build() {
 
 	monsters := int(l.Size / 3)
 
-	posX := randomNumber(l.Size, notX)
-	posY := randomNumber(l.Size, notY)
+	posX := randomUniqueNumber(l.Size, notX)
+	posY := randomUniqueNumber(l.Size, notY)
 
 	for i := 0; i < l.Size; i++ {
 		tmp := make([]Place, 0)
@@ -55,8 +76,8 @@ func (l *Location) build() {
 			if i == posX && j == posY {
 				p.AddMonster(npc.NewMonster())
 				if monsters > 0 {
-					posX = randomNumber(l.Size, notX)
-					posY = randomNumber(l.Size, notY)
+					posX = randomUniqueNumber(l.Size, notX)
+					posY = randomUniqueNumber(l.Size, notY)
 					monsters--
 				}
 			}
@@ -66,14 +87,11 @@ func (l *Location) build() {
 	}
 }
 
-func randomNumber(max, not int) int {
-	s := rand.NewSource(time.Now().UnixNano())
-	r := rand.New(s)
-
-	n := r.Intn(max)
-	if n != not {
+func randomUniqueNumber(max, notIn int) int {
+	n := common.RandomNumber(max)
+	if n != notIn {
 		return n
 	}
 
-	return randomNumber(max, not)
+	return randomUniqueNumber(max, notIn)
 }

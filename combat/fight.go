@@ -1,6 +1,16 @@
 package combat
 
-import "fmt"
+import (
+	"fmt"
+	"termui/v3/widgets"
+)
+
+var logger *widgets.Paragraph
+
+// SetLogger for combat logs
+func SetLogger(p *widgets.Paragraph) {
+	logger = p
+}
 
 // Character interface defines object that has HP and can attack
 type Character interface {
@@ -18,7 +28,7 @@ func Fight(attacker, defender Character) error {
 
 	nextAtt := attacker.Attack()
 	defender.ReduceHP(nextAtt)
-	fmt.Printf("Hitting opponent with %d power, opponent has %d HP left \r\n", nextAtt, defender.GetHP())
+	logger.Text = fmt.Sprintf("Hitting opponent with %d power, opponent has %d HP left \r\n", nextAtt, defender.GetHP())
 	return nil
 }
 

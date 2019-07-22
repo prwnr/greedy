@@ -4,10 +4,16 @@ import (
 	"fmt"
 	"swarm/npc"
 	"swarm/player"
+	"termui/v3/widgets"
 	"testing"
 )
 
 func TestHeroFightsMonster(t *testing.T) {
+	p := widgets.NewParagraph()
+	p.Title = "Combat log"
+	p.SetRect(0, 0, 0, 0)
+	SetLogger(p)
+
 	t.Run("hero kills monster", func(t *testing.T) {
 		m := npc.NewMonster()
 		h := player.NewHero()

@@ -47,7 +47,7 @@ func TestHeroFighting(t *testing.T) {
 		h := NewHero()
 
 		got := h.Attack()
-		if got != 100 {
+		if got != 50 {
 			t.Errorf("hero attack should equal 100, got %d", got)
 		}
 	})

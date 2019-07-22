@@ -2,9 +2,13 @@ package main
 
 import (
 	"flag"
-	"fmt"
+	"log"
+	"swarm/combat"
 	"swarm/player"
 	"swarm/world"
+	"termui/v3/widgets"
+
+	ui "github.com/gizak/termui/v3"
 )
 
 func main() {
@@ -13,22 +17,32 @@ func main() {
 
 	h := player.NewHero()
 	h.StartingPosition((*size/2)-1, *size-1)
-	l := world.NewLocation(*size)
-	world.Move(h, &l, "init")
+	loc := world.NewLocation(*size)
+	world.Move(h, &loc, "init")
 
-	l.Render()
-	var move string
+	if err := ui.Init(); err != nil {
+		log.Fatalf("failed to initialize termui: %v", err)
+	}
+	defer ui.Close()
 
+	worldLoc := loc.Create()
+	p := widgets.NewParagraph()
+	p.Title = "Combat log"
+	p.SetRect(0, 13, 50, 18)
+	combat.SetLogger(p)
+
+	ui.Render(worldLoc, p)
+
+	uiEvents := ui.PollEvents()
 	for {
-		fmt.Print("Next move: ")
-
-		_, err := fmt.Scanf("%s\n", &move)
-		if err != nil {
-			fmt.Println("Failed to read your move. Try again.")
-			continue
+		e := <-uiEvents
+		switch e.ID {
+		case "q", "<C-c>":
+			return
+		default:
+			world.Move(h, &loc, e.ID)
+			loc.Update()
+			ui.Render(worldLoc, p)
 		}
-
-		world.Move(h, &l, move)
-		l.Render()
 	}
 }

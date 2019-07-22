@@ -11,7 +11,7 @@ type Hero struct {
 func NewHero() *Hero {
 	h := &Hero{
 		hp:     100,
-		attack: 100,
+		attack: 50,
 	}
 
 	return h
