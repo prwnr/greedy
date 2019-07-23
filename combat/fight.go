@@ -2,7 +2,6 @@ package combat
 
 import (
 	"fmt"
-	"swarm/view"
 )
 
 // Character interface defines object that has HP and can attack
@@ -13,16 +12,31 @@ type Character interface {
 	Attack() int
 }
 
-// Fight action between two objects
-func Fight(attacker, defender Character, view *view.View) error {
-	if !defender.IsAlive() {
-		return &FightError{err: "Cannot attack dead opponent."}
+// Combat struct
+type Combat struct {
+	attacker Character
+	defender Character
+}
+
+// NewCombat creates new combat with attacker and defender
+func NewCombat(attacker, defender Character) Combat {
+	return Combat{
+		attacker: attacker,
+		defender: defender,
+	}
+}
+
+// Fight action between attacker and defender
+func (c Combat) Fight() (string, error) {
+	if !c.defender.IsAlive() {
+		return "", &FightError{err: "Cannot attack dead opponent."}
 	}
 
-	nextAtt := attacker.Attack()
-	defender.ReduceHP(nextAtt)
-	view.UpdateCombatLog(fmt.Sprintf("Hitting opponent with %d power, opponent has %d HP left \r\n", nextAtt, defender.GetHP()))
-	return nil
+	nextAtt := c.attacker.Attack()
+	c.defender.ReduceHP(nextAtt)
+
+	result := fmt.Sprintf("Hitting opponent with %d power, opponent has %d HP left \r\n", nextAtt, c.defender.GetHP())
+	return result, nil
 }
 
 // FightError occurs when attacker tries to attack dead opponent

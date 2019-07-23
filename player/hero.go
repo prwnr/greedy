@@ -8,19 +8,16 @@ type Hero struct {
 }
 
 // NewHero creates new hero struct
-func NewHero() *Hero {
+func NewHero(x, y int) *Hero {
 	h := &Hero{
 		hp:     100,
 		attack: 50,
 	}
 
-	return h
-}
-
-// StartingPosition sets starting position of a hero
-func (h *Hero) StartingPosition(x, y int) {
 	h.Position.X = x
 	h.Position.Y = y
+
+	return h
 }
 
 // Attack returns attack amount

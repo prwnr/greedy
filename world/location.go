@@ -13,8 +13,8 @@ type Location struct {
 }
 
 //NewLocation creates new game Map with places
-func NewLocation(size int) Location {
-	l := Location{Size: size}
+func NewLocation(size int) *Location {
+	l := &Location{Size: size}
 	l.build()
 
 	return l
@@ -42,8 +42,8 @@ func (l *Location) RenderPlaces() string {
 }
 
 func (l *Location) build() {
-	notX := (l.Size / 2) - 1
-	notY := l.Size - 1
+	notX := 0
+	notY := 0
 
 	monsters := int(l.Size / 3)
 

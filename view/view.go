@@ -6,6 +6,8 @@ import (
 	ui "github.com/gizak/termui/v3"
 )
 
+var listeners []string
+
 // View is a set of elements of game UI
 type View struct {
 	Location  *widgets.Paragraph

@@ -4,21 +4,16 @@ import (
 	"fmt"
 	"swarm/npc"
 	"swarm/player"
-	"termui/v3/widgets"
 	"testing"
 )
 
 func TestHeroFightsMonster(t *testing.T) {
-	p := widgets.NewParagraph()
-	p.Title = "Combat log"
-	p.SetRect(0, 0, 0, 0)
-	SetLogger(p)
-
 	t.Run("hero kills monster", func(t *testing.T) {
 		m := npc.NewMonster()
-		h := player.NewHero()
+		h := player.NewHero(0, 0)
 
-		err := Fight(h, m)
+		c := NewCombat(h, m)
+		_, err := c.Fight()
 		if err != nil && m.IsAlive() {
 			t.Error("monster should be dead, but is still alive")
 		}
@@ -27,9 +22,10 @@ func TestHeroFightsMonster(t *testing.T) {
 	t.Run("hero cant kill dead monster", func(t *testing.T) {
 		m := npc.NewMonster()
 		m.ReduceHP(100)
-		h := player.NewHero()
+		h := player.NewHero(0, 0)
 
-		err := Fight(h, m)
+		c := NewCombat(h, m)
+		_, err := c.Fight()
 		fmt.Errorf("error %v", err)
 
 		if err == nil {
