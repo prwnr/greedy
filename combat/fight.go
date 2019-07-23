@@ -2,6 +2,7 @@ package combat
 
 import (
 	"fmt"
+	"swarm/view"
 	"termui/v3/widgets"
 )
 
@@ -21,14 +22,14 @@ type Character interface {
 }
 
 // Fight action between two objects
-func Fight(attacker, defender Character) error {
+func Fight(attacker, defender Character, view *view.View) error {
 	if !defender.IsAlive() {
 		return &FightError{err: "Cannot attack dead opponent."}
 	}
 
 	nextAtt := attacker.Attack()
 	defender.ReduceHP(nextAtt)
-	logger.Text = fmt.Sprintf("Hitting opponent with %d power, opponent has %d HP left \r\n", nextAtt, defender.GetHP())
+	view.UpdateCombatLog(fmt.Sprintf("Hitting opponent with %d power, opponent has %d HP left \r\n", nextAtt, defender.GetHP()))
 	return nil
 }
 

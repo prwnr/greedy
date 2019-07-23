@@ -4,14 +4,13 @@ import (
 	"strings"
 	"swarm/common"
 	"swarm/npc"
-	"termui/v3/widgets"
+	"swarm/view"
 )
 
 //Location of the game
 type Location struct {
-	Size      int
-	Places    [][]Place
-	presenter *widgets.Paragraph
+	Size   int
+	Places [][]Place
 }
 
 //NewLocation creates new game Map with places
@@ -22,21 +21,9 @@ func NewLocation(size int) Location {
 	return l
 }
 
-// Create location
-func (l *Location) Create() *widgets.Paragraph {
-	p := widgets.NewParagraph()
-	p.Title = "Current location"
-	p.Text = l.RenderPlaces()
-	p.SetRect(10, 0, 32, 12)
-
-	l.presenter = p
-
-	return p
-}
-
-// Update location
-func (l *Location) Update() {
-	l.presenter.Text = l.RenderPlaces()
+// Update for current location
+func (l *Location) Update(v *view.View) {
+	v.UpdateLocation(l.RenderPlaces())
 }
 
 // RenderPlaces on Location

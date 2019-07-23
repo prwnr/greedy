@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"swarm/combat"
 	"swarm/player"
+	"swarm/view"
 )
 
 const (
@@ -18,7 +19,7 @@ const (
 )
 
 // Move changes hero position
-func Move(h *player.Hero, l *Location, direction string) {
+func Move(h *player.Hero, l *Location, direction string, view *view.View) {
 	l.Places[h.Position.Y][h.Position.X].RemoveHero()
 
 	switch direction {
@@ -43,9 +44,11 @@ func Move(h *player.Hero, l *Location, direction string) {
 	p := &l.Places[h.Position.Y][h.Position.X]
 	p.SetHero(h)
 	if p.IsOccupied() {
-		err := combat.Fight(p.GetHero(), p.GetMonster())
+		err := combat.Fight(p.GetHero(), p.GetMonster(), view)
 		if err != nil {
 			fmt.Errorf("Fight error: %v", err)
 		}
 	}
+
+	l.Update(view)
 }
