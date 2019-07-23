@@ -3,15 +3,7 @@ package combat
 import (
 	"fmt"
 	"swarm/view"
-	"termui/v3/widgets"
 )
-
-var logger *widgets.Paragraph
-
-// SetLogger for combat logs
-func SetLogger(p *widgets.Paragraph) {
-	logger = p
-}
 
 // Character interface defines object that has HP and can attack
 type Character interface {

@@ -4,7 +4,6 @@ import (
 	"strings"
 	"swarm/common"
 	"swarm/npc"
-	"swarm/view"
 )
 
 //Location of the game
@@ -19,11 +18,6 @@ func NewLocation(size int) Location {
 	l.build()
 
 	return l
-}
-
-// Update for current location
-func (l *Location) Update(v *view.View) {
-	v.UpdateLocation(l.RenderPlaces())
 }
 
 // RenderPlaces on Location

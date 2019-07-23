@@ -50,5 +50,5 @@ func Move(h *player.Hero, l *Location, direction string, view *view.View) {
 		}
 	}
 
-	l.Update(view)
+	view.UpdateLocation(l.RenderPlaces())
 }

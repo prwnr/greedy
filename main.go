@@ -9,13 +9,15 @@ import (
 	ui "github.com/gizak/termui/v3"
 )
 
+// Size of a single location
+const Size = 10
+
 func main() {
-	size := 10
 	view := view.NewView()
 	h := player.NewHero()
-	loc := world.NewLocation(size)
+	loc := world.NewLocation(Size)
 
-	h.StartingPosition((size/2)-1, size-1)
+	h.StartingPosition((Size/2)-1, Size-1)
 	world.Move(h, &loc, "init", view)
 
 	if err := ui.Init(); err != nil {
