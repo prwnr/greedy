@@ -12,7 +12,7 @@ func NewMonster() *Monster {
 	m := &Monster{
 		look:   "#",
 		hp:     100,
-		attack: 40,
+		attack: 5,
 	}
 	return m
 }

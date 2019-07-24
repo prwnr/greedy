@@ -6,6 +6,7 @@ import (
 	"swarm/player"
 	"swarm/view"
 	"swarm/world"
+	"time"
 )
 
 // Game struct
@@ -16,6 +17,8 @@ type Game struct {
 	Hero *player.Hero
 	//CurrentLocation is a location/map on which Hero is walking
 	CurrentLocation *world.Location
+	//MobsRespawn time in seconds
+	MobsRespawn time.Duration
 }
 
 const (
@@ -33,7 +36,9 @@ const (
 
 // NewGame starts new game with all requirements.
 func NewGame() Game {
-	game := Game{}
+	game := Game{
+		MobsRespawn: 15 * time.Second,
+	}
 
 	game.View = view.NewView()
 	game.Hero = player.NewHero(0, 10-1)

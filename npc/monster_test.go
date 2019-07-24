@@ -17,7 +17,7 @@ func TestMonsterFighting(t *testing.T) {
 		m := NewMonster()
 
 		got := m.GetHP()
-		if got != 100 {
+		if got != m.hp {
 			t.Errorf("monster should have 100 HP upon creation, has %d", got)
 		}
 	})
@@ -27,7 +27,7 @@ func TestMonsterFighting(t *testing.T) {
 		m.ReduceHP(50)
 
 		got := m.GetHP()
-		if got != 50 {
+		if got != m.hp {
 			t.Errorf("monster should have 50 HP after reducing it by 50, has %d", got)
 		}
 	})
@@ -36,7 +36,7 @@ func TestMonsterFighting(t *testing.T) {
 		m := NewMonster()
 
 		got := m.Attack()
-		if got != 40 {
+		if got != m.attack {
 			t.Errorf("monster attack should equal 40, got %d", got)
 		}
 	})

@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"swarm/game"
+	"time"
 
 	ui "github.com/gizak/termui/v3"
 )
@@ -18,20 +19,26 @@ func main() {
 
 	gameOver := false
 	uiEvents := ui.PollEvents()
+	ticker := time.NewTicker(g.MobsRespawn).C
 	for {
-		e := <-uiEvents
-		switch e.ID {
-		case "q", "<C-c>":
-			return
-		default:
-			g.MoveHero(e.ID)
-			if !g.Hero.IsAlive() {
-				g.View.UpdateCombatLog("Hero died")
-				gameOver = true
+		select {
+		case e := <-uiEvents:
+			switch e.ID {
+			case "q", "<C-c>":
+				return
+			default:
+				g.MoveHero(e.ID)
+				if !g.Hero.IsAlive() {
+					g.View.UpdateCombatLog("Hero died")
+					gameOver = true
+				}
 			}
-
-			ui.Render(g.View.All()...)
+		case <-ticker:
+			g.CurrentLocation.PlaceMonsters(1)
+			g.View.UpdateLocation(g.CurrentLocation.RenderPlaces())
 		}
+
+		ui.Render(g.View.All()...)
 
 		if gameOver {
 			break

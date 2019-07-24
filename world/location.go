@@ -17,7 +17,7 @@ func NewLocation(size int) *Location {
 	l := &Location{Size: size}
 	l.build()
 
-	monsters := int(size / 3)
+	monsters := int(size / 2)
 	l.PlaceMonsters(monsters)
 
 	return l
@@ -57,8 +57,8 @@ func (l *Location) PlaceMonsters(num int) {
 }
 
 func placeMonster(l *Location) error {
-	x := randomUniqueNumber(l.Size, 0)
-	y := randomUniqueNumber(l.Size, l.Size-1)
+	x := common.RandomNumber(l.Size)
+	y := common.RandomNumber(l.Size)
 
 	place := &l.Places[x][y]
 	if place.IsOccupied() || place.GetHero() != nil {
@@ -79,13 +79,4 @@ func (l *Location) build() {
 		}
 		l.Places = append(l.Places, tmp)
 	}
-}
-
-func randomUniqueNumber(max, notIn int) int {
-	n := common.RandomNumber(max)
-	if n != notIn {
-		return n
-	}
-
-	return randomUniqueNumber(max, notIn)
 }

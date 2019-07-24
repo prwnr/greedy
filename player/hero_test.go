@@ -27,7 +27,7 @@ func TestHeroFighting(t *testing.T) {
 		h := NewHero(0, 0)
 
 		got := h.GetHP()
-		if got != 100 {
+		if got != h.hp {
 			t.Errorf("hero should have 100 HP upon creation, has %d", got)
 		}
 	})
@@ -37,7 +37,7 @@ func TestHeroFighting(t *testing.T) {
 		h.ReduceHP(50)
 
 		got := h.GetHP()
-		if got != 50 {
+		if got != h.hp {
 			t.Errorf("hero should have 50 HP after reducing it by 50, has %d", got)
 		}
 	})
@@ -46,7 +46,7 @@ func TestHeroFighting(t *testing.T) {
 		h := NewHero(0, 0)
 
 		got := h.Attack()
-		if got != 50 {
+		if got != h.attack {
 			t.Errorf("hero attack should equal 100, got %d", got)
 		}
 	})
