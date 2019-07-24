@@ -36,13 +36,14 @@ const (
 
 // NewGame starts new game with all requirements.
 func NewGame() Game {
+	locationSize := 18
 	game := Game{
 		MonsterSpawn: 15 * time.Second,
 	}
 
 	game.View = view.NewView()
-	game.Hero = player.NewHero(0, 10-1)
-	game.CurrentLocation = world.NewLocation(10)
+	game.Hero = player.NewHero(0, locationSize-1)
+	game.CurrentLocation = world.NewLocation(locationSize)
 
 	currPlace := &game.CurrentLocation.Places[game.Hero.Position.Y][game.Hero.Position.X]
 	currPlace.SetHero(game.Hero)

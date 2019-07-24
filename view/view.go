@@ -20,11 +20,11 @@ func NewView() *View {
 
 	view.Location = widgets.NewParagraph()
 	view.Location.Title = "Location"
-	view.Location.SetRect(10, 0, 32, 12)
+	view.Location.SetRect(0, 0, 38, 20)
 
 	view.CombatLog = widgets.NewParagraph()
 	view.CombatLog.Title = "Combat log"
-	view.CombatLog.SetRect(0, 13, 50, 18)
+	view.CombatLog.SetRect(0, 21, 55, 26)
 
 	return &view
 }
