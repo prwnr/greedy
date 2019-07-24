@@ -49,6 +49,8 @@ func NewGame() Game {
 	currPlace.SetHero(game.Hero)
 	game.View.UpdateLocation(game.CurrentLocation.RenderPlaces())
 
+	game.View.UpdateHeroStats(game.Hero.GetStats())
+
 	return game
 }
 
@@ -81,14 +83,19 @@ func (g *Game) MoveHero(direction string) {
 				fmt.Errorf("Fight error: %v", err)
 			} else {
 				g.View.UpdateCombatLog(res)
-				g.View.UpdateLocation(g.CurrentLocation.RenderPlaces())
 			}
 		}
+
+		return
 	}
 
 	currPlace.RemoveHero()
 	newPlace := &g.CurrentLocation.Places[g.Hero.Position.Y][g.Hero.Position.X]
 	newPlace.SetHero(g.Hero)
+}
 
+// UpdateView updates main views of the game
+func (g *Game) UpdateView() {
 	g.View.UpdateLocation(g.CurrentLocation.RenderPlaces())
+	g.View.UpdateHeroStats(g.Hero.GetStats())
 }

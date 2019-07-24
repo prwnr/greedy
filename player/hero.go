@@ -1,5 +1,7 @@
 package player
 
+import "strconv"
+
 // Hero a newborn hero
 type Hero struct {
 	Position Position
@@ -43,6 +45,14 @@ func (h *Hero) IsAlive() bool {
 // Render shows how hero looks like on Location
 func (h Hero) Render() string {
 	return "*"
+}
+
+// GetStats returns current hero statistics
+func (h *Hero) GetStats() [][]string {
+	return [][]string{
+		[]string{"Health", strconv.FormatInt(int64(h.hp), 10)},
+		[]string{"Attack", strconv.FormatInt(int64(h.attack), 10)},
+	}
 }
 
 // Position of a hero

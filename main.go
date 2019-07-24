@@ -35,9 +35,9 @@ func main() {
 			}
 		case <-ticker:
 			g.CurrentLocation.PlaceMonsters(1)
-			g.View.UpdateLocation(g.CurrentLocation.RenderPlaces())
 		}
 
+		g.UpdateView()
 		ui.Render(g.View.All()...)
 
 		if gameOver {
