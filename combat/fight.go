@@ -1,6 +1,7 @@
 package combat
 
 import (
+	"errors"
 	"fmt"
 )
 
@@ -29,22 +30,16 @@ func NewCombat(attacker, defender Character) Combat {
 // Fight action between attacker and defender
 func (c Combat) Fight() (string, error) {
 	if !c.defender.IsAlive() {
-		return "", &FightError{err: "Cannot attack dead opponent."}
+		return "", errors.New("Cannot attack dead monster")
 	}
 
-	nextAtt := c.attacker.Attack()
-	c.defender.ReduceHP(nextAtt)
+	heroHit := c.attacker.Attack()
+	monsterHit := c.defender.Attack()
+	c.defender.ReduceHP(heroHit)
+	c.attacker.ReduceHP(monsterHit)
 
-	result := fmt.Sprintf("Hitting opponent with %d power, opponent has %d HP left \r\n", nextAtt, c.defender.GetHP())
+	result := fmt.Sprintf("You hit monster for %d damage, monster has %d HP left \r\n", heroHit, c.defender.GetHP())
+	result += fmt.Sprintf("Monster hit you for %d damage from monster. %d HP left \r\n", monsterHit, c.attacker.GetHP())
+
 	return result, nil
-}
-
-// FightError occurs when attacker tries to attack dead opponent
-type FightError struct {
-	err string
-}
-
-// Error returns error string
-func (e *FightError) Error() string {
-	return e.err
 }

@@ -16,6 +16,7 @@ func main() {
 	g := game.NewGame()
 	ui.Render(g.View.All()...)
 
+	gameOver := false
 	uiEvents := ui.PollEvents()
 	for {
 		e := <-uiEvents
@@ -24,7 +25,16 @@ func main() {
 			return
 		default:
 			g.MoveHero(e.ID)
+			if !g.Hero.IsAlive() {
+				g.View.UpdateCombatLog("Hero died")
+				gameOver = true
+			}
+
 			ui.Render(g.View.All()...)
+		}
+
+		if gameOver {
+			break
 		}
 	}
 }

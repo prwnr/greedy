@@ -36,8 +36,8 @@ func TestMonsterFighting(t *testing.T) {
 		m := NewMonster()
 
 		got := m.Attack()
-		if got != 0 {
-			t.Errorf("monster attack should equal 0, got %d", got)
+		if got != 40 {
+			t.Errorf("monster attack should equal 40, got %d", got)
 		}
 	})
 

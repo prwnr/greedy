@@ -27,6 +27,8 @@ const (
 	MoveLeft = "a"
 	//MoveRight key
 	MoveRight = "d"
+	//Attack key
+	Attack = "1"
 )
 
 // NewGame starts new game with all requirements.
@@ -46,7 +48,7 @@ func NewGame() Game {
 
 // MoveHero changes hero position
 func (g *Game) MoveHero(direction string) {
-	g.CurrentLocation.Places[g.Hero.Position.Y][g.Hero.Position.X].RemoveHero()
+	currPlace := &g.CurrentLocation.Places[g.Hero.Position.Y][g.Hero.Position.X]
 
 	switch direction {
 	case MoveUp:
@@ -65,19 +67,22 @@ func (g *Game) MoveHero(direction string) {
 		if g.Hero.Position.X < g.CurrentLocation.Size-1 {
 			g.Hero.Position.X++
 		}
-	}
-
-	currPlace := &g.CurrentLocation.Places[g.Hero.Position.Y][g.Hero.Position.X]
-	currPlace.SetHero(g.Hero)
-	if currPlace.IsOccupied() {
-		c := combat.NewCombat(currPlace.GetHero(), currPlace.GetMonster())
-		res, err := c.Fight()
-		if err != nil {
-			fmt.Errorf("Fight error: %v", err)
-		} else {
-			g.View.UpdateCombatLog(res)
+	case Attack:
+		if currPlace.IsOccupied() {
+			c := combat.NewCombat(currPlace.GetHero(), currPlace.GetMonster())
+			res, err := c.Fight()
+			if err != nil {
+				fmt.Errorf("Fight error: %v", err)
+			} else {
+				g.View.UpdateCombatLog(res)
+				g.View.UpdateLocation(g.CurrentLocation.RenderPlaces())
+			}
 		}
 	}
+
+	currPlace.RemoveHero()
+	newPlace := &g.CurrentLocation.Places[g.Hero.Position.Y][g.Hero.Position.X]
+	newPlace.SetHero(g.Hero)
 
 	g.View.UpdateLocation(g.CurrentLocation.RenderPlaces())
 }

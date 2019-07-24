@@ -2,19 +2,24 @@ package npc
 
 // Monster NPC
 type Monster struct {
-	look string
-	hp   int
+	look   string
+	hp     int
+	attack int
 }
 
 // NewMonster returns new monster struct
 func NewMonster() *Monster {
-	m := &Monster{look: "#", hp: 100}
+	m := &Monster{
+		look:   "#",
+		hp:     100,
+		attack: 40,
+	}
 	return m
 }
 
 // Attack returns attack amount
 func (m *Monster) Attack() int {
-	return 0
+	return m.attack
 }
 
 // ReduceHP substracts given amount from current HP
