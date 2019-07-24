@@ -17,6 +17,9 @@ func NewLocation(size int) *Location {
 	l := &Location{Size: size}
 	l.build()
 
+	monsters := int(size / 3)
+	l.PlaceMonsters(monsters)
+
 	return l
 }
 
@@ -41,27 +44,37 @@ func (l *Location) RenderPlaces() string {
 	return render
 }
 
+// PlaceMonsters on location
+func (l *Location) PlaceMonsters(num int) {
+	for {
+		if num <= 0 {
+			break
+		}
+
+		placeMonster(l)
+		num--
+	}
+}
+
+func placeMonster(l *Location) error {
+	x := randomUniqueNumber(l.Size, 0)
+	y := randomUniqueNumber(l.Size, l.Size-1)
+
+	place := &l.Places[x][y]
+	if place.IsOccupied() || place.GetHero() != nil {
+		return placeMonster(l)
+	}
+
+	place.AddMonster(npc.NewMonster())
+
+	return nil
+}
+
 func (l *Location) build() {
-	notX := 0
-	notY := 0
-
-	monsters := int(l.Size / 3)
-
-	posX := randomUniqueNumber(l.Size, notX)
-	posY := randomUniqueNumber(l.Size, notY)
-
 	for i := 0; i < l.Size; i++ {
 		tmp := make([]Place, 0)
 		for j := 0; j < l.Size; j++ {
 			p := Place{}
-			if i == posX && j == posY {
-				p.AddMonster(npc.NewMonster())
-				if monsters > 0 {
-					posX = randomUniqueNumber(l.Size, notX)
-					posY = randomUniqueNumber(l.Size, notY)
-					monsters--
-				}
-			}
 			tmp = append(tmp, p)
 		}
 		l.Places = append(l.Places, tmp)
