@@ -19,7 +19,7 @@ func main() {
 
 	gameOver := false
 	uiEvents := ui.PollEvents()
-	ticker := time.NewTicker(g.MobsRespawn).C
+	ticker := time.NewTicker(g.MonsterSpawn).C
 	for {
 		select {
 		case e := <-uiEvents:

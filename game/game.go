@@ -17,8 +17,8 @@ type Game struct {
 	Hero *player.Hero
 	//CurrentLocation is a location/map on which Hero is walking
 	CurrentLocation *world.Location
-	//MobsRespawn time in seconds
-	MobsRespawn time.Duration
+	//MonsterSpawn time in seconds
+	MonsterSpawn time.Duration
 }
 
 const (
@@ -37,7 +37,7 @@ const (
 // NewGame starts new game with all requirements.
 func NewGame() Game {
 	game := Game{
-		MobsRespawn: 15 * time.Second,
+		MonsterSpawn: 15 * time.Second,
 	}
 
 	game.View = view.NewView()
