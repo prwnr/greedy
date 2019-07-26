@@ -6,7 +6,6 @@ import (
 	"swarm/player"
 	"swarm/view"
 	"swarm/world"
-	"time"
 )
 
 // Game struct
@@ -17,8 +16,8 @@ type Game struct {
 	Hero *player.Hero
 	//CurrentLocation is a location/map on which Hero is walking
 	CurrentLocation *world.Location
-	//MonsterSpawn time in seconds
-	MonsterSpawn time.Duration
+	//Config for the game
+	Config Config
 }
 
 const (
@@ -36,14 +35,13 @@ const (
 
 // NewGame starts new game with all requirements.
 func NewGame() Game {
-	locationSize := 18
-	game := Game{
-		MonsterSpawn: 15 * time.Second,
-	}
+	game := Game{}
+
+	loadConfig(&game)
 
 	game.View = view.NewView()
-	game.Hero = player.NewHero(0, locationSize-1)
-	game.CurrentLocation = world.NewLocation(locationSize)
+	game.Hero = player.NewHero(0, game.Config.LocationSize-1)
+	game.CurrentLocation = world.NewLocation(game.Config.LocationSize)
 
 	currPlace := &game.CurrentLocation.Places[game.Hero.Position.Y][game.Hero.Position.X]
 	currPlace.SetHero(game.Hero)
@@ -82,6 +80,9 @@ func (g *Game) MoveHero(direction string) {
 			if err != nil {
 				fmt.Errorf("Fight error: %v", err)
 			} else {
+				if !currPlace.GetMonster().IsAlive() {
+					currPlace.RemoveMonster()
+				}
 				g.View.UpdateCombatLog(res)
 			}
 		}

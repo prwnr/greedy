@@ -31,6 +31,11 @@ func (p *Place) RemoveHero() {
 	p.hero = nil
 }
 
+// RemoveMonster removes monster from current place
+func (p *Place) RemoveMonster() {
+	p.monster = nil
+}
+
 // GetHero returns stands on Place
 func (p *Place) GetHero() *player.Hero {
 	return p.hero

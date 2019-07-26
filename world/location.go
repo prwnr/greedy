@@ -56,6 +56,19 @@ func (l *Location) PlaceMonsters(num int) {
 	}
 }
 
+// HasFreePlace checks if every place on location is occupied
+func (l *Location) HasFreePlace() bool {
+	for _, row := range l.Places {
+		for _, p := range row {
+			if !p.IsOccupied() {
+				return true
+			}
+		}
+	}
+
+	return false
+}
+
 func placeMonster(l *Location) error {
 	x := common.RandomNumber(l.Size)
 	y := common.RandomNumber(l.Size)

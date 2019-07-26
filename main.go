@@ -19,7 +19,7 @@ func main() {
 
 	gameOver := false
 	uiEvents := ui.PollEvents()
-	ticker := time.NewTicker(g.MonsterSpawn).C
+	ticker := time.NewTicker(g.Config.MonsterSpawn).C
 	for {
 		select {
 		case e := <-uiEvents:
@@ -34,7 +34,9 @@ func main() {
 				}
 			}
 		case <-ticker:
-			g.CurrentLocation.PlaceMonsters(1)
+			if g.CurrentLocation.HasFreePlace() {
+				g.CurrentLocation.PlaceMonsters(1)
+			}
 		}
 
 		g.UpdateView()
