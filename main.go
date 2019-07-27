@@ -21,27 +21,31 @@ func main() {
 	uiEvents := ui.PollEvents()
 	ticker := time.NewTicker(g.Config.MonsterSpawn).C
 	for {
+		if gameOver {
+			e := <-uiEvents
+			if e.ID == "q" || e.ID == "<C-c>" {
+				return
+			}
+			continue
+		}
+
 		select {
 		case e := <-uiEvents:
 			switch e.ID {
 			case "q", "<C-c>":
 				return
 			default:
-				g.MoveHero(e.ID)
+				g.PlayerAction(e.ID)
 				if !g.Hero.IsAlive() {
-					g.View.UpdateCombatLog("Hero died")
+					g.View.UpdateCombatLog("Hero died. Press 'q' to quit.")
 					gameOver = true
 				}
 			}
 		case <-ticker:
-			g.CurrentLocation.PlaceMonsters(1)
+			g.CurrentLocation.PlaceMonsters(g.Config.MonstersNum)
 		}
 
 		g.UpdateView()
 		ui.Render(g.View.All()...)
-
-		if gameOver {
-			break
-		}
 	}
 }

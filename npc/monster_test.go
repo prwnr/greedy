@@ -24,7 +24,7 @@ func TestMonsterFighting(t *testing.T) {
 
 	t.Run("monster HP can be reduced", func(t *testing.T) {
 		m := NewMonster()
-		m.ReduceHP(50)
+		m.ReduceHealth(50)
 
 		got := m.GetHP()
 		if got != m.hp {
@@ -51,7 +51,7 @@ func TestMonsterFighting(t *testing.T) {
 
 	t.Run("monster is dead when his HP is below or at 0", func(t *testing.T) {
 		m := NewMonster()
-		m.ReduceHP(500)
+		m.ReduceHealth(500)
 
 		if m.IsAlive() {
 			t.Error("monster should be dead")

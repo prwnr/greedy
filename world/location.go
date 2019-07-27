@@ -62,6 +62,11 @@ func (l *Location) PlaceHero(h *player.Hero) {
 	l.Places[h.Position.Y][h.Position.X].SetHero(h)
 }
 
+// GetHeroPlace returns place on which hero currently is
+func (l *Location) GetHeroPlace(h *player.Hero) *Place {
+	return &l.Places[h.Position.Y][h.Position.X]
+}
+
 // HasFreePlace checks if every place on location is occupied
 func (l *Location) HasFreePlace() bool {
 	for _, row := range l.Places {

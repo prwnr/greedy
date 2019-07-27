@@ -31,6 +31,8 @@ const (
 	MoveRight = "d"
 	//Attack key
 	Attack = "1"
+	//Heal key
+	Heal = "2"
 )
 
 // NewGame starts new game with all requirements.
@@ -51,27 +53,20 @@ func NewGame() Game {
 	return game
 }
 
-// MoveHero changes hero position
-func (g *Game) MoveHero(direction string) {
-	currPlace := &g.CurrentLocation.Places[g.Hero.Position.Y][g.Hero.Position.X]
+// PlayerAction changes hero position
+func (g *Game) PlayerAction(action string) {
+	currPlace := g.CurrentLocation.GetHeroPlace(g.Hero)
 
-	switch direction {
+	maxStep := g.CurrentLocation.Size - 1
+	switch action {
 	case MoveUp:
-		if g.Hero.Position.Y > 0 {
-			g.Hero.Position.Y--
-		}
+		g.Hero.MoveUp()
 	case MoveDown:
-		if g.Hero.Position.Y < g.CurrentLocation.Size-1 {
-			g.Hero.Position.Y++
-		}
+		g.Hero.MoveDown(maxStep)
 	case MoveLeft:
-		if g.Hero.Position.X > 0 {
-			g.Hero.Position.X--
-		}
+		g.Hero.MoveLeft()
 	case MoveRight:
-		if g.Hero.Position.X < g.CurrentLocation.Size-1 {
-			g.Hero.Position.X++
-		}
+		g.Hero.MoveRight(maxStep)
 	case Attack:
 		if currPlace.IsOccupied() {
 			c := combat.NewCombat(currPlace.GetHero(), currPlace.GetMonster())
@@ -87,11 +82,15 @@ func (g *Game) MoveHero(direction string) {
 		}
 
 		return
+	case Heal:
+		res := g.Hero.UseHeal()
+		g.View.UpdateCombatLog(res)
+
+		return
 	}
 
 	currPlace.RemoveHero()
-	newPlace := &g.CurrentLocation.Places[g.Hero.Position.Y][g.Hero.Position.X]
-	newPlace.SetHero(g.Hero)
+	g.CurrentLocation.PlaceHero(g.Hero)
 }
 
 // UpdateView updates main views of the game
@@ -99,7 +98,7 @@ func (g *Game) UpdateView() {
 	g.View.UpdateLocation(g.CurrentLocation.RenderPlaces())
 	g.View.UpdateHeroStats(g.Hero.GetStats())
 
-	currPlace := &g.CurrentLocation.Places[g.Hero.Position.Y][g.Hero.Position.X]
+	currPlace := g.CurrentLocation.GetHeroPlace(g.Hero)
 	if currPlace.IsOccupied() {
 		g.View.ShowMonster(currPlace.GetMonster().GetStats())
 	} else {

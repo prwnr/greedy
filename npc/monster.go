@@ -24,8 +24,8 @@ func (m *Monster) Attack() int {
 	return m.attack
 }
 
-// ReduceHP subtracts given amount from current HP
-func (m *Monster) ReduceHP(amount int) {
+// ReduceHealth subtracts given amount from current HP
+func (m *Monster) ReduceHealth(amount int) {
 	m.hp -= amount
 }
 

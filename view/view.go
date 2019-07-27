@@ -28,12 +28,12 @@ func NewView() *View {
 
 	view.Hero = widgets.NewTable()
 	view.Hero.Title = "My hero"
-	view.Hero.SetRect(40, 0, 55, 5)
+	view.Hero.SetRect(40, 0, 55, 8)
 
 	view.Monster = widgets.NewTable()
 	view.Monster.Title = ""
 	view.Monster.Rows = [][]string{[]string{""}}
-	view.Monster.SetRect(40, 5, 55, 10)
+	view.Monster.SetRect(40, 8, 55, 13)
 
 	return &view
 }

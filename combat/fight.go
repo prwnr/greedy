@@ -8,7 +8,7 @@ import (
 // Character interface defines object that has HP and can attack
 type Character interface {
 	IsAlive() bool
-	ReduceHP(amount int)
+	ReduceHealth(amount int)
 	GetHP() int
 	Attack() int
 }
@@ -35,8 +35,8 @@ func (c Combat) Fight() (string, error) {
 
 	heroHit := c.attacker.Attack()
 	monsterHit := c.defender.Attack()
-	c.defender.ReduceHP(heroHit)
-	c.attacker.ReduceHP(monsterHit)
+	c.defender.ReduceHealth(heroHit)
+	c.attacker.ReduceHealth(monsterHit)
 
 	result := fmt.Sprintf("You hit monster for %d damage, monster has %d HP left \r\n", heroHit, c.defender.GetHP())
 	result += fmt.Sprintf("Monster hit you for %d damage. %d HP left \r\n", monsterHit, c.attacker.GetHP())

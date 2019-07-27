@@ -21,7 +21,7 @@ func TestHeroFightsMonster(t *testing.T) {
 
 	t.Run("hero cant kill dead monster", func(t *testing.T) {
 		m := npc.NewMonster()
-		m.ReduceHP(100)
+		m.ReduceHealth(100)
 		h := player.NewHero(0, 0)
 
 		c := NewCombat(h, m)
