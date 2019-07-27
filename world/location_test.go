@@ -1,17 +1,143 @@
 package world
 
 import (
+	"swarm/player"
 	"testing"
 )
 
 func TestLocationCreation(t *testing.T) {
-	got := NewLocation(5)
+	l := NewLocation(5) // created 2 two monsters
 
-	if len(got.Places) != 5 {
-		t.Errorf("got %v elements, want 2", got)
+	assertHasFreeSpots(t, l)
+	assertCount(t, len(l.Places), 5)
+	assertCount(t, len(l.Places[0]), 5)
+}
+
+func TestLocationRender(t *testing.T) {
+	t.Run("render empty location", func (t *testing.T) {
+		l := NewLocation(1)
+
+		got := l.RenderPlaces()
+		want := "_\r\n"
+		if got != want {
+			t.Errorf("rendered location is '%s', wanted '%s'", got, want)
+		}
+	})
+
+	t.Run("render location with hero", func (t *testing.T) {
+		l := NewLocation(1)
+		h := player.NewHero(0, 0)
+		l.PlaceHero(h)
+
+		got := l.RenderPlaces()
+		want := "*\r\n"
+		if got != want {
+			t.Errorf("rendered location is '%s', wanted '%s'", got, want)
+		}
+	})
+}
+
+func TestPlacingMonsters(t *testing.T) {
+	t.Run("placing few monsters on location", func (t *testing.T) {
+		l := NewLocation(5) // created with 2 monsters
+
+		assertHasFreeSpots(t, l)
+		assertCount(t, len(l.Places), 5)
+		assertCount(t, len(l.Places[0]), 5)
+
+		l.PlaceMonsters(5)
+		assertHasFreeSpots(t, l)
+	})
+
+	t.Run("placing maximum number of monsters", func (t *testing.T) {
+		l := NewLocation(2) // created with 1 monster, 3 spots left
+
+		assertHasFreeSpots(t, l)
+		assertCount(t, len(l.Places), 2)
+		assertCount(t, len(l.Places[0]), 2)
+
+		l.PlaceMonsters(3)
+		assertNotHasFreeSpots(t, l)
+	})
+
+	t.Run("placing more monster that location can contain wont work", func (t *testing.T) {
+		l := NewLocation(2) // created with 1 monster, 3 spots left
+
+		assertHasFreeSpots(t, l)
+		assertCount(t, len(l.Places), 2)
+		assertCount(t, len(l.Places[0]), 2)
+
+		l.PlaceMonsters(5)
+		assertNotHasFreeSpots(t, l)
+	})
+
+	t.Run("placing new monster after removing one", func (t *testing.T) {
+		l := NewLocation(2) // created with 1 monster, 3 spots left
+
+		assertHasFreeSpots(t, l)
+		assertCount(t, len(l.Places), 2)
+		assertCount(t, len(l.Places[0]), 2)
+
+		l.PlaceMonsters(3)
+		assertNotHasFreeSpots(t, l)
+
+		for i := 0; i < 2; i++ {
+			l.Places[i][i].RemoveMonster()
+			assertHasFreeSpots(t, l)
+
+			l.PlaceMonsters(1)
+			assertNotHasFreeSpots(t, l)
+		}
+	})
+}
+
+func TestLocationWithHero(t *testing.T) {
+	assertHeroIsOnPosition := func (t *testing.T, l *Location, x, y int) {
+		if l.Places[y][x].GetHero() == nil {
+			t.Errorf("hero should be on position X%d, Y%d, but is not found", x, y)
+		}
 	}
 
-	if len(got.Places[0]) != 5 {
-		t.Errorf("got %v elements on first row, want 2", got)
+	t.Run("placing a hero on location", func (t *testing.T) {
+		l := NewLocation(2) // created with 1 monster, 3 spots left
+		h := player.NewHero(0, 1)
+
+		l.PlaceHero(h)
+
+		assertHasFreeSpots(t, l)
+		assertHeroIsOnPosition(t, l, 0, 1)
+	})
+
+	t.Run("changing hero place", func (t *testing.T) {
+		l := NewLocation(2) // created with 1 monster, 3 spots left
+		h := player.NewHero(0, 1)
+
+		l.PlaceHero(h)
+
+		assertHasFreeSpots(t, l)
+		assertHeroIsOnPosition(t, l, 0, 1)
+
+		h.Position.X = 1
+
+		l.PlaceHero(h)
+		assertHeroIsOnPosition(t, l, 1, 1)
+	})
+}
+
+func assertHasFreeSpots(t *testing.T, l *Location) {
+	if !l.HasFreePlace() {
+		t.Errorf("location should have free spots")
+	}
+}
+
+func assertNotHasFreeSpots(t *testing.T, l *Location) {
+	if l.HasFreePlace() {
+		t.Errorf("location shouldn't have free spots")
+	}
+}
+
+func assertCount(t *testing.T, got, want int) {
+	if got != want {
+		t.Errorf("got %d elements, want %d", got, want)
 	}
 }

@@ -4,6 +4,7 @@ import (
 	"strings"
 	"swarm/common"
 	"swarm/npc"
+	"swarm/player"
 )
 
 //Location of the game
@@ -48,19 +49,24 @@ func (l *Location) RenderPlaces() string {
 func (l *Location) PlaceMonsters(num int) {
 	for {
 		if num <= 0 {
-			break
+			return
 		}
 
-		placeMonster(l)
+		_ = placeMonster(l)
 		num--
 	}
+}
+
+// PlaceHero on location (based on his current position)
+func (l *Location) PlaceHero(h *player.Hero) {
+	l.Places[h.Position.Y][h.Position.X].SetHero(h)
 }
 
 // HasFreePlace checks if every place on location is occupied
 func (l *Location) HasFreePlace() bool {
 	for _, row := range l.Places {
 		for _, p := range row {
-			if !p.IsOccupied() {
+			if !p.IsOccupied() && p.GetHero() == nil {
 				return true
 			}
 		}
@@ -69,7 +75,11 @@ func (l *Location) HasFreePlace() bool {
 	return false
 }
 
-func placeMonster(l *Location) error {
+func placeMonster(l *Location) bool {
+	if !l.HasFreePlace() {
+		return false
+	}
+
 	x := common.RandomNumber(l.Size)
 	y := common.RandomNumber(l.Size)
 
@@ -80,7 +90,7 @@ func placeMonster(l *Location) error {
 
 	place.AddMonster(npc.NewMonster())
 
-	return nil
+	return true
 }
 
 func (l *Location) build() {

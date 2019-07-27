@@ -34,9 +34,7 @@ func main() {
 				}
 			}
 		case <-ticker:
-			if g.CurrentLocation.HasFreePlace() {
-				g.CurrentLocation.PlaceMonsters(1)
-			}
+			g.CurrentLocation.PlaceMonsters(1)
 		}
 
 		g.UpdateView()

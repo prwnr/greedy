@@ -1,12 +1,10 @@
 package view
 
 import (
-	"termui/v3/widgets"
+	"github.com/gizak/termui/v3/widgets"
 
 	ui "github.com/gizak/termui/v3"
 )
-
-var listeners []string
 
 // View is a set of elements of game UI
 type View struct {

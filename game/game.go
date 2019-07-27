@@ -43,8 +43,7 @@ func NewGame() Game {
 	game.Hero = player.NewHero(0, game.Config.LocationSize-1)
 	game.CurrentLocation = world.NewLocation(game.Config.LocationSize)
 
-	currPlace := &game.CurrentLocation.Places[game.Hero.Position.Y][game.Hero.Position.X]
-	currPlace.SetHero(game.Hero)
+	game.CurrentLocation.PlaceHero(game.Hero)
 	game.View.UpdateLocation(game.CurrentLocation.RenderPlaces())
 
 	game.View.UpdateHeroStats(game.Hero.GetStats())
@@ -78,7 +77,7 @@ func (g *Game) MoveHero(direction string) {
 			c := combat.NewCombat(currPlace.GetHero(), currPlace.GetMonster())
 			res, err := c.Fight()
 			if err != nil {
-				fmt.Errorf("Fight error: %v", err)
+				_ = fmt.Errorf("fight error: %v", err)
 			} else {
 				if !currPlace.GetMonster().IsAlive() {
 					currPlace.RemoveMonster()

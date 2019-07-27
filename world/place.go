@@ -43,10 +43,6 @@ func (p *Place) GetHero() *player.Hero {
 
 // GetMonster returns monster from the place
 func (p *Place) GetMonster() *npc.Monster {
-	if p.monster == nil {
-		return nil
-	}
-
 	return p.monster
 }
 
