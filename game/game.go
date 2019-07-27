@@ -98,4 +98,11 @@ func (g *Game) MoveHero(direction string) {
 func (g *Game) UpdateView() {
 	g.View.UpdateLocation(g.CurrentLocation.RenderPlaces())
 	g.View.UpdateHeroStats(g.Hero.GetStats())
+
+	currPlace := &g.CurrentLocation.Places[g.Hero.Position.Y][g.Hero.Position.X]
+	if currPlace.IsOccupied() {
+		g.View.ShowMonster(currPlace.GetMonster().GetStats())
+	} else {
+		g.View.HideMonster()
+	}
 }

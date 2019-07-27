@@ -30,7 +30,7 @@ func NewCombat(attacker, defender Character) Combat {
 // Fight action between attacker and defender
 func (c Combat) Fight() (string, error) {
 	if !c.defender.IsAlive() {
-		return "", errors.New("Cannot attack dead monster")
+		return "", errors.New("cannot attack dead monster")
 	}
 
 	heroHit := c.attacker.Attack()
@@ -39,7 +39,7 @@ func (c Combat) Fight() (string, error) {
 	c.attacker.ReduceHP(monsterHit)
 
 	result := fmt.Sprintf("You hit monster for %d damage, monster has %d HP left \r\n", heroHit, c.defender.GetHP())
-	result += fmt.Sprintf("Monster hit you for %d damage from monster. %d HP left \r\n", monsterHit, c.attacker.GetHP())
+	result += fmt.Sprintf("Monster hit you for %d damage. %d HP left \r\n", monsterHit, c.attacker.GetHP())
 
 	return result, nil
 }

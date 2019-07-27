@@ -11,6 +11,7 @@ type View struct {
 	Location  *widgets.Paragraph
 	CombatLog *widgets.Paragraph
 	Hero      *widgets.Table
+	Monster   *widgets.Table
 }
 
 // NewView returns new predefined views
@@ -23,12 +24,16 @@ func NewView() *View {
 
 	view.CombatLog = widgets.NewParagraph()
 	view.CombatLog.Title = "Combat log"
-	view.CombatLog.SetRect(0, 21, 55, 26)
+	view.CombatLog.SetRect(0, 20, 55, 25)
 
 	view.Hero = widgets.NewTable()
 	view.Hero.Title = "My hero"
-	view.Hero.TextStyle = ui.NewStyle(ui.ColorWhite)
 	view.Hero.SetRect(40, 0, 55, 5)
+
+	view.Monster = widgets.NewTable()
+	view.Monster.Title = ""
+	view.Monster.Rows = [][]string{[]string{""}}
+	view.Monster.SetRect(40, 5, 55, 10)
 
 	return &view
 }
@@ -48,11 +53,24 @@ func (v *View) UpdateHeroStats(stats [][]string) {
 	v.Hero.Rows = stats
 }
 
+// ShowMonster creates new view for current monster
+func (v *View) ShowMonster(stats [][]string) {
+	v.Monster.Title = "Monster"
+	v.Monster.Rows = stats
+}
+
+// HideMonster removes monster from view
+func (v *View) HideMonster() {
+	v.Monster.Title = ""
+	v.Monster.Rows = [][]string{[]string{""}}
+}
+
 // All return all available view parts
 func (v *View) All() []ui.Drawable {
 	return []ui.Drawable{
 		v.Location,
 		v.CombatLog,
 		v.Hero,
+		v.Monster,
 	}
 }

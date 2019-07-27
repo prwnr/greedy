@@ -1,5 +1,7 @@
 package npc
 
+import "strconv"
+
 // Monster NPC
 type Monster struct {
 	look   string
@@ -22,7 +24,7 @@ func (m *Monster) Attack() int {
 	return m.attack
 }
 
-// ReduceHP substracts given amount from current HP
+// ReduceHP subtracts given amount from current HP
 func (m *Monster) ReduceHP(amount int) {
 	m.hp -= amount
 }
@@ -40,4 +42,12 @@ func (m *Monster) IsAlive() bool {
 // Render monster look
 func (m Monster) Render() string {
 	return m.look
+}
+
+// GetStats returns current hero statistics
+func (m *Monster) GetStats() [][]string {
+	return [][]string{
+		[]string{"Health", strconv.FormatInt(int64(m.hp), 10)},
+		[]string{"Attack", strconv.FormatInt(int64(m.attack), 10)},
+	}
 }

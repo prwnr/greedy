@@ -23,7 +23,11 @@ func (p *Place) AddMonster(m *npc.Monster) {
 
 // IsOccupied checks if place is occupied by monsters
 func (p *Place) IsOccupied() bool {
-	return p.monster != nil
+	if p.monster == nil {
+		return false
+	}
+
+	return p.monster.IsAlive()
 }
 
 // RemoveHero removes Hero from current place

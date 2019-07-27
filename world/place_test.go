@@ -61,7 +61,7 @@ func TestPlaceMonsters(t *testing.T) {
 func TestPlaceRendering(t *testing.T) {
 	t.Run("renders Hero from place", func(t *testing.T) {
 		p := Place{}
-		h := player.NewHero(0,0)
+		h := player.NewHero(0, 0)
 
 		p.SetHero(h)
 
@@ -94,7 +94,7 @@ func TestPlaceRendering(t *testing.T) {
 	t.Run("renders Hero and Monster on place", func(t *testing.T) {
 		p := Place{}
 		m := npc.NewMonster()
-		h := player.NewHero(0,0)
+		h := player.NewHero(0, 0)
 
 		p.SetHero(h)
 		p.AddMonster(m)

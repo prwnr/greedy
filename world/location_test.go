@@ -14,7 +14,7 @@ func TestLocationCreation(t *testing.T) {
 }
 
 func TestLocationRender(t *testing.T) {
-	t.Run("render empty location", func (t *testing.T) {
+	t.Run("render empty location", func(t *testing.T) {
 		l := NewLocation(1)
 
 		got := l.RenderPlaces()
@@ -24,7 +24,7 @@ func TestLocationRender(t *testing.T) {
 		}
 	})
 
-	t.Run("render location with hero", func (t *testing.T) {
+	t.Run("render location with hero", func(t *testing.T) {
 		l := NewLocation(1)
 		h := player.NewHero(0, 0)
 		l.PlaceHero(h)
@@ -38,7 +38,7 @@ func TestLocationRender(t *testing.T) {
 }
 
 func TestPlacingMonsters(t *testing.T) {
-	t.Run("placing few monsters on location", func (t *testing.T) {
+	t.Run("placing few monsters on location", func(t *testing.T) {
 		l := NewLocation(5) // created with 2 monsters
 
 		assertHasFreeSpots(t, l)
@@ -49,7 +49,7 @@ func TestPlacingMonsters(t *testing.T) {
 		assertHasFreeSpots(t, l)
 	})
 
-	t.Run("placing maximum number of monsters", func (t *testing.T) {
+	t.Run("placing maximum number of monsters", func(t *testing.T) {
 		l := NewLocation(2) // created with 1 monster, 3 spots left
 
 		assertHasFreeSpots(t, l)
@@ -60,7 +60,7 @@ func TestPlacingMonsters(t *testing.T) {
 		assertNotHasFreeSpots(t, l)
 	})
 
-	t.Run("placing more monster that location can contain wont work", func (t *testing.T) {
+	t.Run("placing more monster that location can contain wont work", func(t *testing.T) {
 		l := NewLocation(2) // created with 1 monster, 3 spots left
 
 		assertHasFreeSpots(t, l)
@@ -71,7 +71,7 @@ func TestPlacingMonsters(t *testing.T) {
 		assertNotHasFreeSpots(t, l)
 	})
 
-	t.Run("placing new monster after removing one", func (t *testing.T) {
+	t.Run("placing new monster after removing one", func(t *testing.T) {
 		l := NewLocation(2) // created with 1 monster, 3 spots left
 
 		assertHasFreeSpots(t, l)
@@ -92,13 +92,13 @@ func TestPlacingMonsters(t *testing.T) {
 }
 
 func TestLocationWithHero(t *testing.T) {
-	assertHeroIsOnPosition := func (t *testing.T, l *Location, x, y int) {
+	assertHeroIsOnPosition := func(t *testing.T, l *Location, x, y int) {
 		if l.Places[y][x].GetHero() == nil {
 			t.Errorf("hero should be on position X%d, Y%d, but is not found", x, y)
 		}
 	}
 
-	t.Run("placing a hero on location", func (t *testing.T) {
+	t.Run("placing a hero on location", func(t *testing.T) {
 		l := NewLocation(2) // created with 1 monster, 3 spots left
 		h := player.NewHero(0, 1)
 
@@ -108,7 +108,7 @@ func TestLocationWithHero(t *testing.T) {
 		assertHeroIsOnPosition(t, l, 0, 1)
 	})
 
-	t.Run("changing hero place", func (t *testing.T) {
+	t.Run("changing hero place", func(t *testing.T) {
 		l := NewLocation(2) // created with 1 monster, 3 spots left
 		h := player.NewHero(0, 1)
 
