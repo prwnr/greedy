@@ -42,7 +42,7 @@ func main() {
 				}
 			}
 		case <-ticker:
-			g.CurrentLocation.PlaceMonsters(g.Config.MonstersNum)
+			g.CurrentLocation.PlaceMonsters(g.Config.MonstersSpawnNum)
 		}
 
 		g.UpdateView()
