@@ -21,3 +21,16 @@ func TestGeneratingRandomNumber(t *testing.T) {
 		}
 	})
 }
+
+func TestGeneratingRandomNumberWithMinimum(t *testing.T) {
+	for i := 0; i < 10; i++ {
+		num := RandomMinNumber(10, 20)
+		if num > 20 {
+			t.Errorf("got number higher than 20, where it shouldnt %d", num)
+		}
+
+		if num < 10 {
+			t.Errorf("got number lower than 10, where it shouldnt %d", num)
+		}
+	}
+}
