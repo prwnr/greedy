@@ -5,7 +5,7 @@ import (
 )
 
 func TestCreatesNewMonster(t *testing.T) {
-	m := NewMonster()
+	m := NewMonster(1)
 
 	if m.Render() != "#" {
 		t.Errorf("expected monster with '#' look, got '%s'", m.Render())
@@ -14,7 +14,7 @@ func TestCreatesNewMonster(t *testing.T) {
 
 func TestMonsterFighting(t *testing.T) {
 	t.Run("monster is created with HP", func(t *testing.T) {
-		m := NewMonster()
+		m := NewMonster(1)
 
 		got := m.GetHP()
 		if got != m.health {
@@ -23,7 +23,7 @@ func TestMonsterFighting(t *testing.T) {
 	})
 
 	t.Run("monster HP can be reduced", func(t *testing.T) {
-		m := NewMonster()
+		m := NewMonster(1)
 		m.ReduceHealth(50)
 
 		got := m.GetHP()
@@ -33,7 +33,7 @@ func TestMonsterFighting(t *testing.T) {
 	})
 
 	t.Run("monster can attack", func(t *testing.T) {
-		m := NewMonster()
+		m := NewMonster(1)
 
 		got := m.Attack()
 		if got != m.attack {
@@ -42,7 +42,7 @@ func TestMonsterFighting(t *testing.T) {
 	})
 
 	t.Run("monster is alive when his HP is above 0", func(t *testing.T) {
-		m := NewMonster()
+		m := NewMonster(1)
 
 		if !m.IsAlive() {
 			t.Error("monster should be alive")
@@ -50,7 +50,7 @@ func TestMonsterFighting(t *testing.T) {
 	})
 
 	t.Run("monster is dead when his HP is below or at 0", func(t *testing.T) {
-		m := NewMonster()
+		m := NewMonster(1)
 		m.ReduceHealth(500)
 
 		if m.IsAlive() {

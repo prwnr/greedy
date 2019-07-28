@@ -44,7 +44,7 @@ func TestPlaceHero(t *testing.T) {
 func TestPlaceMonsters(t *testing.T) {
 	t.Run("can add new Monster on place", func(t *testing.T) {
 		p := Place{}
-		m := npc.NewMonster()
+		m := npc.NewMonster(1)
 
 		p.AddMonster(m)
 
@@ -82,7 +82,7 @@ func TestPlaceRendering(t *testing.T) {
 
 	t.Run("renders Monster on place", func(t *testing.T) {
 		p := Place{}
-		m := npc.NewMonster()
+		m := npc.NewMonster(1)
 		p.AddMonster(m)
 
 		got := p.Render()
@@ -93,7 +93,7 @@ func TestPlaceRendering(t *testing.T) {
 
 	t.Run("renders Hero and Monster on place", func(t *testing.T) {
 		p := Place{}
-		m := npc.NewMonster()
+		m := npc.NewMonster(1)
 		h := player.NewHero(0, 0)
 
 		p.SetHero(h)

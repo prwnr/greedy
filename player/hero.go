@@ -66,10 +66,11 @@ func (h *Hero) UseHeal() string {
 		return fmt.Sprintf("Hero health restored by %d.", 0)
 	}
 
-	h.health += 5 * h.level.Number
+	healAmount := 5 * h.level.Number
+	h.health += healAmount
 	h.mana -= 11 - h.level.Number
 
-	return fmt.Sprintf("Hero health restored by %d.", 2)
+	return fmt.Sprintf("Hero health restored by %d.", healAmount)
 }
 
 // Render shows how hero looks like on Location

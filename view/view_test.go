@@ -28,10 +28,7 @@ func TestViewsUpdate(t *testing.T) {
 		}
 		v.UpdateHeroStats(want)
 
-		got := v.Hero.Rows
-		if !reflect.DeepEqual(want, got) {
-			t.Errorf("wanted stats on vie %v, but got %v", want, got)
-		}
+		assertSlicesEqual(t, want, v.Hero.Rows)
 	})
 
 	t.Run("test monster update", func(t *testing.T) {
@@ -42,17 +39,37 @@ func TestViewsUpdate(t *testing.T) {
 		}
 		v.ShowMonster(want)
 
-		got := v.Monster.Rows
 
 		assertStringEquals(t, "Monster", v.Monster.Title)
-		if !reflect.DeepEqual(want, got) {
-			t.Errorf("wanted stats on vie %v, but got %v", want, got)
+		assertSlicesEqual(t, want, v.Monster.Rows)
+	})
+
+	t.Run("test hides monster update", func(t *testing.T) {
+		v := NewView()
+
+		want := [][]string{
+			[]string{"Foo"},
 		}
+		v.ShowMonster(want)
+
+		assertStringEquals(t, "Monster", v.Monster.Title)
+		assertSlicesEqual(t, want, v.Monster.Rows)
+
+		v.HideMonster()
+		want = [][]string{[]string{""}}
+		assertStringEquals(t, "", v.Monster.Title)
+		assertSlicesEqual(t, want, v.Monster.Rows)
 	})
 }
 
 func assertStringEquals(t *testing.T, want, got string) {
 	if want != got {
 		t.Errorf("wanted string %s, got %s", want, got)
+	}
+}
+
+func assertSlicesEqual(t *testing.T, want, got [][]string) {
+	if !reflect.DeepEqual(want, got) {
+		t.Errorf("wanted stats on vie %v, but got %v", want, got)
 	}
 }

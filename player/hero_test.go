@@ -22,7 +22,13 @@ func TestShowsHeroLook(t *testing.T) {
 	}
 }
 
-func TestHeroFightingMethods(t *testing.T) {
+func TestHeroFighting(t *testing.T) {
+	assertAttackBetween := func(t *testing.T, actual, min, max int) {
+		if actual < min || actual > max {
+			t.Errorf("attack should be between %d and %d, got %d", min, max, actual)
+		}
+	}
+
 	t.Run("hero is created with HP", func(t *testing.T) {
 		h := NewHero(0, 0)
 
@@ -46,9 +52,7 @@ func TestHeroFightingMethods(t *testing.T) {
 		h := NewHero(0, 0)
 
 		got := h.Attack()
-		if got != h.attack {
-			t.Errorf("hero attack should equal 100, got %d", got)
-		}
+		assertAttackBetween(t, got, 10, 15)
 	})
 
 	t.Run("hero is alive when his HP is above 0", func(t *testing.T) {
@@ -84,8 +88,8 @@ func TestHeroSkills(t *testing.T) {
 
 		got := h.UseHeal()
 
-		assertHealthEquals(t, 92, h.GetHP())
-		if got != "Hero health restored by 2." {
+		assertHealthEquals(t, 95, h.GetHP())
+		if got != "Hero health restored by 5." {
 			t.Errorf("healing message is invalid, got '%s'", got)
 		}
 	})

@@ -2,8 +2,11 @@ package npc
 
 import (
 	"strconv"
-	"swarm/common"
-	"swarm/player"
+)
+
+const (
+	BaseHealth = 30
+	BaseAttack = 5
 )
 
 // Monster NPC
@@ -11,18 +14,17 @@ type Monster struct {
 	look   string
 	health int
 	attack int
-	level  *player.Level
+	level  *Level
 }
 
 // NewMonster returns new monster struct
-func NewMonster() *Monster {
-	bHealth := 30
-	l := player.NewLevel(common.RandomNumber(3)+1, 1)
+func NewMonster(level int) *Monster {
+	l := NewLevel(level)
 
 	m := &Monster{
 		look:   "#",
-		health: bHealth * l.Number,
-		attack: 5,
+		health: BaseHealth * l.Number,
+		attack: BaseAttack,
 		level:  l,
 	}
 	return m

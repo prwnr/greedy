@@ -93,7 +93,7 @@ func placeMonster(l *Location) bool {
 		return placeMonster(l)
 	}
 
-	place.AddMonster(npc.NewMonster())
+	place.AddMonster(npc.NewMonster(common.RandomMinNumber(1, 3)))
 
 	return true
 }
