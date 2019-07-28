@@ -23,14 +23,17 @@ func TestGeneratingRandomNumber(t *testing.T) {
 }
 
 func TestGeneratingRandomNumberWithMinimum(t *testing.T) {
-	for i := 0; i < 10; i++ {
-		num := RandomMinNumber(10, 20)
-		if num > 20 {
-			t.Errorf("got number higher than 20, where it shouldnt %d", num)
+	minWant := 10
+	maxWant := 20
+
+	for i := 0; i < 20; i++ {
+		got := RandomMinNumber(minWant, maxWant)
+		if got > maxWant {
+			t.Errorf("got number higher than %d - %d", maxWant, got)
 		}
 
-		if num < 10 {
-			t.Errorf("got number lower than 10, where it shouldnt %d", num)
+		if got < minWant {
+			t.Errorf("got number lower than %d - %d", minWant, got)
 		}
 	}
 }
