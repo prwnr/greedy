@@ -9,6 +9,8 @@ const (
 	BaseAttack = 5
 )
 
+var LevelLook = map[int]string{1: "#", 2: "$", 3: "@"}
+
 // Monster NPC
 type Monster struct {
 	look   string
@@ -22,7 +24,7 @@ func NewMonster(level int) *Monster {
 	l := NewLevel(level)
 
 	m := &Monster{
-		look:   "#",
+		look:   LevelLook[l.Number],
 		health: BaseHealth * l.Number,
 		attack: BaseAttack,
 		level:  l,

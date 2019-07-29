@@ -24,7 +24,7 @@ func RandomMinNumber(min, max int) int {
 	s := rand.NewSource(time.Now().UnixNano())
 	r := rand.New(s)
 
-	num := r.Intn(max)
+	num := r.Intn(max) + 1
 	if num < min {
 		num = int(math.Min(float64(num+min), float64(max)))
 	}

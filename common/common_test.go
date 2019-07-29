@@ -13,8 +13,8 @@ func TestGeneratingRandomNumber(t *testing.T) {
 	})
 
 	t.Run("generates different number", func(t *testing.T) {
-		first := RandomNumber(100)
-		second := RandomNumber(100)
+		first := RandomNumber(10)
+		second := RandomNumber(10000)
 
 		if first == second {
 			t.Error("first and second number were equal and they shouldnt")
