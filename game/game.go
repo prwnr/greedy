@@ -89,6 +89,12 @@ func (g *Game) PlayerAction(action string) {
 		return
 	}
 
+	if currPlace.IsOccupied() {
+		c := combat.NewCombat(currPlace.GetHero(), currPlace.GetMonster())
+		res := c.AttackBack()
+		g.View.UpdateCombatLog(res)
+	}
+
 	currPlace.RemoveHero()
 	g.CurrentLocation.PlaceHero(g.Hero)
 }

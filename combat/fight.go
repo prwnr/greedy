@@ -34,12 +34,20 @@ func (c Combat) Fight() (string, error) {
 	}
 
 	heroHit := c.attacker.Attack()
-	monsterHit := c.defender.Attack()
 	c.defender.ReduceHealth(heroHit)
-	c.attacker.ReduceHealth(monsterHit)
 
 	result := fmt.Sprintf("You hit monster for %d damage, monster has %d HP left \r\n", heroHit, c.defender.GetHP())
-	result += fmt.Sprintf("Monster hit you for %d damage. %d HP left \r\n", monsterHit, c.attacker.GetHP())
+	result += c.AttackBack()
 
 	return result, nil
+}
+
+// AttackBack is an action where defender hits attacker
+func (c Combat) AttackBack() string {
+	monsterHit := c.defender.Attack()
+	c.attacker.ReduceHealth(monsterHit)
+
+	result := fmt.Sprintf("Monster hit you for %d damage. %d HP left \r\n", monsterHit, c.attacker.GetHP())
+
+	return result
 }
