@@ -1,7 +1,7 @@
 package world
 
 import (
-	"swarm/player"
+	"swarm/character/player"
 	"testing"
 )
 

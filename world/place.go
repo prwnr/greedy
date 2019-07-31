@@ -1,8 +1,8 @@
 package world
 
 import (
-	"swarm/npc"
-	"swarm/player"
+	"swarm/character/npc"
+	"swarm/character/player"
 )
 
 // Place is a single element on a Location

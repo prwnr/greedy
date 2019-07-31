@@ -1,8 +1,8 @@
 package combat
 
 import (
-	"swarm/npc"
-	"swarm/player"
+	"swarm/character/npc"
+	"swarm/character/player"
 	"testing"
 )
 

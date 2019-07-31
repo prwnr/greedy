@@ -2,8 +2,8 @@ package game
 
 import (
 	"fmt"
+	"swarm/character/player"
 	"swarm/combat"
-	"swarm/player"
 	"swarm/view"
 	"swarm/world"
 )

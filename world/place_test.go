@@ -2,8 +2,8 @@ package world
 
 import (
 	"strings"
-	"swarm/npc"
-	"swarm/player"
+	"swarm/character/npc"
+	"swarm/character/player"
 	"testing"
 )
 
