@@ -32,8 +32,8 @@ func TestHeroFighting(t *testing.T) {
 	t.Run("hero is created with HP", func(t *testing.T) {
 		h := NewHero(0, 0)
 
-		got := h.GetHP()
-		if got != h.health {
+		got := h.GetHealth()
+		if got != 100 {
 			t.Errorf("hero should have 100 HP upon creation, has %d", got)
 		}
 	})
@@ -42,8 +42,8 @@ func TestHeroFighting(t *testing.T) {
 		h := NewHero(0, 0)
 		h.ReduceHealth(50)
 
-		got := h.GetHP()
-		if got != h.health {
+		got := h.GetHealth()
+		if got != 50 {
 			t.Errorf("hero should have 50 HP after reducing it by 50, has %d", got)
 		}
 	})
@@ -51,7 +51,7 @@ func TestHeroFighting(t *testing.T) {
 	t.Run("hero can attack", func(t *testing.T) {
 		h := NewHero(0, 0)
 
-		got := h.Attack()
+		got := h.AttackPower()
 		assertAttackBetween(t, got, 10, 15)
 	})
 
@@ -84,11 +84,11 @@ func TestHeroSkills(t *testing.T) {
 		h := NewHero(0, 0)
 
 		h.ReduceHealth(10)
-		assertHealthEquals(t, 90, h.GetHP())
+		assertHealthEquals(t, 90, h.GetHealth())
 
 		got := h.UseHeal()
 
-		assertHealthEquals(t, 95, h.GetHP())
+		assertHealthEquals(t, 95, h.GetHealth())
 		if got != "Hero health restored by 5." {
 			t.Errorf("healing message is invalid, got '%s'", got)
 		}
@@ -96,11 +96,11 @@ func TestHeroSkills(t *testing.T) {
 
 	t.Run("hero cannot over heal", func(t *testing.T) {
 		h := NewHero(0, 0)
-		assertHealthEquals(t, 100, h.GetHP())
+		assertHealthEquals(t, 100, h.GetHealth())
 
 		got := h.UseHeal()
 
-		assertHealthEquals(t, 100, h.GetHP())
+		assertHealthEquals(t, 100, h.GetHealth())
 		if got != "Hero health restored by 0." {
 			t.Errorf("healing message is invalid, got '%s'", got)
 		}
@@ -112,11 +112,11 @@ func TestHeroSkills(t *testing.T) {
 		h.ReduceHealth(10)
 		h.mana = 0
 
-		assertHealthEquals(t, 90, h.GetHP())
+		assertHealthEquals(t, 90, h.GetHealth())
 
 		got := h.UseHeal()
 
-		assertHealthEquals(t, 90, h.GetHP())
+		assertHealthEquals(t, 90, h.GetHealth())
 		if got != "Mana is too low." {
 			t.Errorf("returned message should be about low mana, got '%s'", got)
 		}

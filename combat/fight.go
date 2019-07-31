@@ -5,22 +5,22 @@ import (
 	"fmt"
 )
 
-// Character interface defines object that has HP and can attack
-type Character interface {
+// Fightable interface defines object that can fight in combats.
+type Fightable interface {
 	IsAlive() bool
 	ReduceHealth(amount int)
-	GetHP() int
-	Attack() int
+	GetHealth() int
+	AttackPower() int
 }
 
 // Combat struct
 type Combat struct {
-	attacker Character
-	defender Character
+	attacker Fightable
+	defender Fightable
 }
 
 // NewCombat creates new combat with attacker and defender
-func NewCombat(attacker, defender Character) Combat {
+func NewCombat(attacker, defender Fightable) Combat {
 	return Combat{
 		attacker: attacker,
 		defender: defender,
@@ -33,10 +33,10 @@ func (c Combat) Fight() (string, error) {
 		return "", errors.New("cannot attack dead monster")
 	}
 
-	heroHit := c.attacker.Attack()
+	heroHit := c.attacker.AttackPower()
 	c.defender.ReduceHealth(heroHit)
 
-	result := fmt.Sprintf("You hit monster for %d damage, monster has %d HP left \r\n", heroHit, c.defender.GetHP())
+	result := fmt.Sprintf("You hit monster for %d damage, monster has %d HP left \r\n", heroHit, c.defender.GetHealth())
 	result += c.AttackBack()
 
 	return result, nil
@@ -44,10 +44,10 @@ func (c Combat) Fight() (string, error) {
 
 // AttackBack is an action where defender hits attacker
 func (c Combat) AttackBack() string {
-	monsterHit := c.defender.Attack()
+	monsterHit := c.defender.AttackPower()
 	c.attacker.ReduceHealth(monsterHit)
 
-	result := fmt.Sprintf("Monster hit you for %d damage. %d HP left \r\n", monsterHit, c.attacker.GetHP())
+	result := fmt.Sprintf("Monster hit you for %d damage. %d HP left \r\n", monsterHit, c.attacker.GetHealth())
 
 	return result
 }

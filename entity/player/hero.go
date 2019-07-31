@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 	"swarm/common"
+	"swarm/entity"
 )
 
 const (
@@ -14,21 +15,21 @@ const (
 
 // Hero a newborn hero
 type Hero struct {
+	entity.Entity
 	Position Position
 	level    *Level
-	health   int
 	mana     int
-	attack   int
 }
 
 // NewHero creates new hero struct
 func NewHero(x, y int) *Hero {
 	h := &Hero{
-		level:  NewLevel(1, 5),
-		health: BaseHealth,
-		mana:   BaseMana,
-		attack: BaseAttack,
+		level: NewLevel(1, 5),
+		mana:  BaseMana,
 	}
+
+	h.Entity.Health = BaseHealth
+	h.Entity.Attack = BaseAttack
 
 	h.Position.X = x
 	h.Position.Y = y
@@ -36,24 +37,9 @@ func NewHero(x, y int) *Hero {
 	return h
 }
 
-// Attack returns attack amount
-func (h *Hero) Attack() int {
-	return common.RandomMinNumber(h.attack-5, h.attack)
-}
-
-// ReduceHealth subtracts given amount from current HP
-func (h *Hero) ReduceHealth(amount int) {
-	h.health -= amount
-}
-
-// GetHP returns current hero HP
-func (h *Hero) GetHP() int {
-	return h.health
-}
-
-// IsAlive checks if monster HP is not at or below 0
-func (h *Hero) IsAlive() bool {
-	return h.health > 0
+// AttackPower returns attack amount
+func (h *Hero) AttackPower() int {
+	return common.RandomMinNumber(h.Entity.AttackPower()-5, h.Entity.AttackPower())
 }
 
 // UseHeal activates given hero skill
@@ -62,12 +48,12 @@ func (h *Hero) UseHeal() string {
 		return fmt.Sprint("Mana is too low.")
 	}
 
-	if h.health == 100 {
+	if h.GetHealth() == 100 {
 		return fmt.Sprintf("Hero health restored by %d.", 0)
 	}
 
 	healAmount := 5 * h.level.Number
-	h.health += healAmount
+	h.Entity.Health += healAmount
 	h.mana -= 11 - h.level.Number
 
 	return fmt.Sprintf("Hero health restored by %d.", healAmount)
@@ -82,9 +68,9 @@ func (h Hero) Render() string {
 func (h *Hero) GetStats() [][]string {
 	return [][]string{
 		[]string{"Level", strconv.FormatInt(int64(h.level.Number), 10)},
-		[]string{"Health", strconv.FormatInt(int64(h.health), 10)},
+		[]string{"Health", strconv.FormatInt(int64(h.Entity.Health), 10)},
 		[]string{"Mana", strconv.FormatInt(int64(h.mana), 10)},
-		[]string{"Attack", strconv.FormatInt(int64(h.attack), 10)},
+		[]string{"Attack", strconv.FormatInt(int64(h.Entity.Attack), 10)},
 	}
 }
 

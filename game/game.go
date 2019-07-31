@@ -2,8 +2,8 @@ package game
 
 import (
 	"fmt"
-	"swarm/character/player"
 	"swarm/combat"
+	"swarm/entity/player"
 	"swarm/view"
 	"swarm/world"
 )
@@ -29,7 +29,7 @@ const (
 	MoveLeft = "a"
 	//MoveRight key
 	MoveRight = "d"
-	//Attack key
+	//AttackPower key
 	Attack = "1"
 	//Heal key
 	Heal = "2"

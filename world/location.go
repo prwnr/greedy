@@ -2,9 +2,9 @@ package world
 
 import (
 	"strings"
-	"swarm/character/npc"
-	"swarm/character/player"
 	"swarm/common"
+	"swarm/entity/npc"
+	"swarm/entity/player"
 )
 
 //Location of the game

@@ -1,8 +1,8 @@
 package combat
 
 import (
-	"swarm/character/npc"
-	"swarm/character/player"
+	"swarm/entity/npc"
+	"swarm/entity/player"
 	"testing"
 )
 
@@ -43,8 +43,8 @@ func TestDefenderAttacksAttackedBack(t *testing.T) {
 	assertAttackerHealth(t, h, 95)
 }
 
-func assertAttackerHealth(t *testing.T, attacker Character, want int) {
-	if attacker.GetHP() != want {
+func assertAttackerHealth(t *testing.T, attacker Fightable, want int) {
+	if attacker.GetHealth() != want {
 		t.Errorf("attacker should have %dHP after being hit by monster", want)
 	}
 }

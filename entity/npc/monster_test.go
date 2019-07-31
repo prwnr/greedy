@@ -14,30 +14,37 @@ func TestCreatesNewMonster(t *testing.T) {
 
 func TestMonsterFighting(t *testing.T) {
 	t.Run("monster is created with HP", func(t *testing.T) {
-		m := NewMonster(1)
+		first := NewMonster(1)
 
-		got := m.GetHP()
-		if got != m.health {
-			t.Errorf("monster should have 100 HP upon creation, has %d", got)
+		firstGot := first.GetHealth()
+		if firstGot != 30 {
+			t.Errorf("monster level 1 should have 30 HP upon creation, has %d", firstGot)
+		}
+
+		second := NewMonster(2)
+
+		secondGot := second.GetHealth()
+		if secondGot != 60 {
+			t.Errorf("monster level 2 should have 60 HP upon creation, has %d", secondGot)
 		}
 	})
 
 	t.Run("monster HP can be reduced", func(t *testing.T) {
 		m := NewMonster(1)
-		m.ReduceHealth(50)
+		m.ReduceHealth(20)
 
-		got := m.GetHP()
-		if got != m.health {
-			t.Errorf("monster should have 50 HP after reducing it by 50, has %d", got)
+		got := m.GetHealth()
+		if got != 10 {
+			t.Errorf("monster should have 10 HP after reducing it by 20, has %d", got)
 		}
 	})
 
 	t.Run("monster can attack", func(t *testing.T) {
 		m := NewMonster(1)
 
-		got := m.Attack()
-		if got != m.attack {
-			t.Errorf("monster attack should equal 40, got %d", got)
+		got := m.AttackPower()
+		if got != 5 {
+			t.Errorf("monster level 1 attack should equal 5, got %d", got)
 		}
 	})
 
