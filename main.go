@@ -26,6 +26,13 @@ func main() {
 			if e.ID == "q" || e.ID == "<C-c>" {
 				return
 			}
+
+			if e.ID == "r" {
+				g = game.NewGame()
+				ui.Render(g.View.All()...)
+				gameOver = false
+			}
+
 			continue
 		}
 
@@ -37,7 +44,7 @@ func main() {
 			default:
 				g.PlayerAction(e.ID)
 				if !g.Hero.IsAlive() {
-					g.View.UpdateCombatLog("Hero died. Press 'q' to quit.")
+					g.View.UpdateCombatLog("Hero died. Press 'q' to quit or 'r' to restart.")
 					gameOver = true
 				}
 			}
