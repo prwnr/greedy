@@ -1,7 +1,7 @@
 package npc
 
 import (
-	"strconv"
+	"fmt"
 	"swarm/entity"
 )
 
@@ -15,8 +15,9 @@ var LevelLook = map[int]string{1: "#", 2: "$", 3: "@"}
 // Monster NPC
 type Monster struct {
 	entity.Entity
-	look  string
-	level *Level
+	look      string
+	level     *Level
+	maxHealth int
 }
 
 // NewMonster returns new monster struct
@@ -28,10 +29,16 @@ func NewMonster(level int) *Monster {
 		level: l,
 	}
 
-	m.Entity.Health = BaseHealth * l.Number
-	m.Entity.Attack = BaseAttack
+	m.maxHealth = BaseHealth * l.Number
+	m.Entity.Health = m.maxHealth
+	m.Entity.Attack = BaseAttack * l.Number
 
 	return m
+}
+
+// GetExperienceValue returns how much experience monster is worth.
+func (m *Monster) GetExperienceValue() int {
+	return 15 * m.level.Number
 }
 
 // Render monster look
@@ -42,8 +49,8 @@ func (m Monster) Render() string {
 // GetStats returns current hero statistics
 func (m *Monster) GetStats() [][]string {
 	return [][]string{
-		[]string{"Level", strconv.FormatInt(int64(m.level.Number), 10)},
-		[]string{"Health", strconv.FormatInt(int64(m.GetHealth()), 10)},
-		[]string{"AttackPower", strconv.FormatInt(int64(m.AttackPower()), 10)},
+		[]string{"Level", fmt.Sprintf("%d", m.level.Number)},
+		[]string{"Health", fmt.Sprintf("%d/%d", m.GetHealth(), m.maxHealth)},
+		[]string{"Attack", fmt.Sprintf("%d", m.AttackPower())},
 	}
 }

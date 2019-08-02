@@ -37,3 +37,31 @@ func TestGeneratingRandomNumberWithMinimum(t *testing.T) {
 		}
 	}
 }
+
+func TestSliceContains(t *testing.T) {
+	type args struct {
+		s []string
+		l string
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		{"slice contains", args{
+			s: []string{"foo", "bar"},
+			l: "foo",
+		}, true},
+		{"slice not contains", args{
+			s: []string{"foo", "bar"},
+			l: "FooBar",
+		}, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := SliceContains(tt.args.s, tt.args.l); got != tt.want {
+				t.Errorf("SliceContains() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

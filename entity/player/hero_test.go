@@ -1,6 +1,7 @@
 package player
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 )
@@ -119,6 +120,59 @@ func TestHeroSkills(t *testing.T) {
 		assertHealthEquals(t, 90, h.GetHealth())
 		if got != "Mana is too low." {
 			t.Errorf("returned message should be about low mana, got '%s'", got)
+		}
+	})
+}
+
+func TestHeroGainExperience(t *testing.T) {
+	tests := []struct {
+		name      string
+		gainedExp int
+		want      string
+	}{
+		{"gains 15 experience", 15, fmt.Sprintf("Gained %d experience.\r\n", 15)},
+		{"gains 40 experience", 40, fmt.Sprintf("Gained %d experience.\r\n", 40)},
+		{"gains 80 experience", 80, fmt.Sprintf("Gained %d experience.\r\n", 80)},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			h := NewHero(0, 0)
+			if got := h.GainExperience(tt.gainedExp); got != tt.want {
+				t.Errorf("GainExperience() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestHeroLevelUp(t *testing.T) {
+	assertHeroLevel := func(h *Hero, want int) {
+		if h.level.Number != want {
+			t.Errorf("Hero should be at level %d, got %d", want, h.level.Number)
+		}
+	}
+
+	t.Run("hero levels up gaining experience", func(t *testing.T) {
+		h := NewHero(0, 0)
+
+		h.GainExperience(200)
+		assertHeroLevel(h, 2)
+	})
+
+	t.Run("hero reaches maximum level", func(t *testing.T) {
+		h := NewHero(0, 0)
+
+		assertHeroLevel(h, 1)
+		for i := 1; i < 5; i++ {
+			exp := h.level.Next.ReqExperience - h.experience
+			h.GainExperience(exp)
+			assertHeroLevel(h, i+1)
+		}
+
+		h.GainExperience(100)
+		assertHeroLevel(h, 5)
+
+		if !h.MaxLevel() {
+			t.Error("Hero should be at max level")
 		}
 	})
 }

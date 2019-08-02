@@ -2,7 +2,6 @@ package player
 
 import (
 	"fmt"
-	"strconv"
 	"swarm/common"
 	"swarm/entity"
 )
@@ -16,16 +15,22 @@ const (
 // Hero a newborn hero
 type Hero struct {
 	entity.Entity
-	Position Position
-	level    *Level
-	mana     int
+	Position   Position
+	level      *Level
+	experience int
+	mana       int
+
+	maxHealth int
+	maxMana   int
 }
 
 // NewHero creates new hero struct
 func NewHero(x, y int) *Hero {
 	h := &Hero{
-		level: NewLevel(1, 5),
-		mana:  BaseMana,
+		level:     NewLevel(1, 5),
+		mana:      BaseMana,
+		maxHealth: BaseHealth,
+		maxMana:   BaseMana,
 	}
 
 	h.Entity.Health = BaseHealth
@@ -48,7 +53,7 @@ func (h *Hero) UseHeal() string {
 		return fmt.Sprint("Mana is too low.")
 	}
 
-	if h.GetHealth() == 100 {
+	if h.GetHealth() == h.maxHealth {
 		return fmt.Sprintf("Hero health restored by %d.", 0)
 	}
 
@@ -66,12 +71,57 @@ func (h Hero) Render() string {
 
 // GetStats returns current hero statistics
 func (h *Hero) GetStats() [][]string {
-	return [][]string{
-		[]string{"Level", strconv.FormatInt(int64(h.level.Number), 10)},
-		[]string{"Health", strconv.FormatInt(int64(h.Entity.Health), 10)},
-		[]string{"Mana", strconv.FormatInt(int64(h.mana), 10)},
-		[]string{"Attack", strconv.FormatInt(int64(h.Entity.Attack), 10)},
+	var reqExp int
+	if !h.MaxLevel() {
+		reqExp = h.level.Next.ReqExperience
+	} else {
+		reqExp = h.experience
 	}
+
+	return [][]string{
+		[]string{"Level", fmt.Sprintf("%d", h.level.Number)},
+		[]string{"Health", fmt.Sprintf("%d/%d", h.Entity.Health, h.maxHealth)},
+		[]string{"Mana", fmt.Sprintf("%d/%d", h.mana, h.maxMana)},
+		[]string{"Attack", fmt.Sprintf("%d", h.Entity.Attack)},
+		[]string{"Experience", fmt.Sprintf("%d/%d", h.experience, reqExp)},
+	}
+}
+
+// GainExperience adds exp to hero.
+// Call LevelUp method once required experience is met.
+func (h *Hero) GainExperience(amount int) string {
+	if h.MaxLevel() {
+		return ""
+	}
+
+	h.experience += amount
+	if h.experience >= h.level.Next.ReqExperience {
+		h.levelUp()
+	}
+
+	return fmt.Sprintf("Gained %d experience.\r\n", amount)
+}
+
+// MaxLevel determines if hero reached his maximum possible level.
+func (h *Hero) MaxLevel() bool {
+	if h.level.Next != nil {
+		return false
+	}
+
+	return true
+}
+
+func (h *Hero) levelUp() {
+	if h.MaxLevel() {
+		return
+	}
+
+	h.level = h.level.Next
+	h.Attack = BaseAttack + h.level.Number*2
+	h.maxHealth = BaseHealth + h.level.Number*50
+	h.Health = h.maxHealth
+	h.maxMana = BaseMana + h.level.Number*20
+	h.mana = h.maxMana
 }
 
 // Position of a hero

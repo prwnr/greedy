@@ -19,9 +19,15 @@ func NewLevel(number, max int) *Level {
 
 	level := &Level{
 		Number:        number,
-		ReqExperience: number * 100,
+		ReqExperience: calculateLevelExperience(number),
 		Next:          nextLevel,
 	}
 
 	return level
+}
+
+func calculateLevelExperience(num int) int {
+	i := (num - 1) * 100
+
+	return i + int(float64(i)*0.1)*(num-1)
 }

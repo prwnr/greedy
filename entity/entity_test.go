@@ -108,7 +108,7 @@ func TestEntityReduceHealth(t *testing.T) {
 			e.ReduceHealth(tt.amount)
 
 			if got := e.GetHealth(); got != tt.want {
-				t.Errorf("After ReduceHealth(), want GetHealth() = %v, want %v", got, tt.want)
+				t.Errorf("After ReduceHealth(), got GetHealth() = %v, want %v", got, tt.want)
 			}
 		})
 	}

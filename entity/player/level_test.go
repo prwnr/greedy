@@ -14,10 +14,10 @@ func TestNewLevel(t *testing.T) {
 	})
 
 	t.Run("creates levels hierarchy", func(t *testing.T) {
-		l := NewLevel(1, 3)
+		l := NewLevel(1, 5)
 
 		//assert three non-empty levels
-		for i := 1; i < 3; i++ {
+		for i := 1; i < 5; i++ {
 			assertLevelEquals(t, i, l.Number)
 
 			l = l.Next

@@ -31,3 +31,14 @@ func RandomMinNumber(min, max int) int {
 
 	return num
 }
+
+// SliceContains checks if slice of strings contains given string
+func SliceContains(s []string, l string) bool {
+	for _, v := range s {
+		if v == l {
+			return true
+		}
+	}
+
+	return false
+}

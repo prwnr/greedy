@@ -24,16 +24,16 @@ func NewView() *View {
 
 	view.CombatLog = widgets.NewParagraph()
 	view.CombatLog.Title = "Combat log"
-	view.CombatLog.SetRect(0, 20, 55, 25)
+	view.CombatLog.SetRect(0, 20, 65, 26)
 
 	view.Hero = widgets.NewTable()
 	view.Hero.Title = "My hero"
-	view.Hero.SetRect(40, 0, 55, 10)
+	view.Hero.SetRect(40, 0, 65, 11)
 
 	view.Monster = widgets.NewTable()
 	view.Monster.Title = ""
 	view.Monster.Rows = [][]string{[]string{""}}
-	view.Monster.SetRect(40, 10, 55, 17)
+	view.Monster.SetRect(40, 11, 65, 20)
 
 	return &view
 }

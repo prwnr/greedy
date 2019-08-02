@@ -3,6 +3,7 @@ package game
 import (
 	"fmt"
 	"swarm/combat"
+	"swarm/common"
 	"swarm/entity/player"
 	"swarm/view"
 	"swarm/world"
@@ -58,6 +59,9 @@ func (g *Game) PlayerAction(action string) {
 	currPlace := g.CurrentLocation.GetHeroPlace(g.Hero)
 
 	maxStep := g.CurrentLocation.Size - 1
+	hero := currPlace.GetHero()
+	monster := currPlace.GetMonster()
+
 	switch action {
 	case MoveUp:
 		g.Hero.MoveUp()
@@ -69,13 +73,16 @@ func (g *Game) PlayerAction(action string) {
 		g.Hero.MoveRight(maxStep)
 	case Attack:
 		if currPlace.IsOccupied() {
-			c := combat.NewCombat(currPlace.GetHero(), currPlace.GetMonster())
+			c := combat.NewCombat(hero, monster)
 			res, err := c.Fight()
 			if err != nil {
 				_ = fmt.Errorf("fight error: %v", err)
 			} else {
-				if !currPlace.GetMonster().IsAlive() {
+				if !monster.IsAlive() {
 					currPlace.RemoveMonster()
+					if hero.IsAlive() {
+						res += hero.GainExperience(monster.GetExperienceValue())
+					}
 				}
 				g.View.UpdateCombatLog(res)
 			}
@@ -89,8 +96,9 @@ func (g *Game) PlayerAction(action string) {
 		return
 	}
 
-	if currPlace.IsOccupied() {
-		c := combat.NewCombat(currPlace.GetHero(), currPlace.GetMonster())
+	move := []string{MoveUp, MoveRight, MoveLeft, MoveDown}
+	if currPlace.IsOccupied() && common.SliceContains(move, action) {
+		c := combat.NewCombat(hero, monster)
 		res := c.AttackBack()
 		g.View.UpdateCombatLog(res)
 	}

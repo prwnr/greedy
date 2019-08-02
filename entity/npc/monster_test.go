@@ -65,3 +65,24 @@ func TestMonsterFighting(t *testing.T) {
 		}
 	})
 }
+
+func TestMonsterGetExperienceValue(t *testing.T) {
+	tests := []struct {
+		name  string
+		level int
+		want  int
+	}{
+		{"1 lvl mob gives 15 exp", 1, 15},
+		{"2 lvl mob gives 30 exp", 2, 30},
+		{"5 lvl mob gives 75 exp", 5, 75},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			m := NewMonster(tt.level)
+
+			if got := m.GetExperienceValue(); got != tt.want {
+				t.Errorf("GetExperienceValue() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
