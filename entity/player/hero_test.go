@@ -34,17 +34,18 @@ func TestHeroFighting(t *testing.T) {
 		h := NewHero(0, 0)
 
 		got := h.GetHealth()
-		if got != 100 {
+		if got != BaseHealth {
 			t.Errorf("hero should have 100 HP upon creation, has %d", got)
 		}
 	})
 
 	t.Run("hero HP can be reduced", func(t *testing.T) {
 		h := NewHero(0, 0)
-		h.ReduceHealth(50)
+		reduce := 50
+		h.ReduceHealth(reduce)
 
 		got := h.GetHealth()
-		if got != 50 {
+		if got != BaseHealth-reduce {
 			t.Errorf("hero should have 50 HP after reducing it by 50, has %d", got)
 		}
 	})
@@ -83,13 +84,14 @@ func TestHeroSkills(t *testing.T) {
 
 	t.Run("hero heals himself", func(t *testing.T) {
 		h := NewHero(0, 0)
+		reduce := 10
 
-		h.ReduceHealth(10)
-		assertHealthEquals(t, 90, h.GetHealth())
+		h.ReduceHealth(reduce)
+		assertHealthEquals(t, BaseHealth-reduce, h.GetHealth())
 
 		got := h.UseHeal()
 
-		assertHealthEquals(t, 95, h.GetHealth())
+		assertHealthEquals(t, BaseHealth-reduce+5, h.GetHealth())
 		if got != "Hero health restored by 5." {
 			t.Errorf("healing message is invalid, got '%s'", got)
 		}
@@ -97,11 +99,11 @@ func TestHeroSkills(t *testing.T) {
 
 	t.Run("hero cannot over heal", func(t *testing.T) {
 		h := NewHero(0, 0)
-		assertHealthEquals(t, 100, h.GetHealth())
+		assertHealthEquals(t, BaseHealth, h.GetHealth())
 
 		got := h.UseHeal()
 
-		assertHealthEquals(t, 100, h.GetHealth())
+		assertHealthEquals(t, BaseHealth, h.GetHealth())
 		if got != "Hero health restored by 0." {
 			t.Errorf("healing message is invalid, got '%s'", got)
 		}
@@ -109,15 +111,16 @@ func TestHeroSkills(t *testing.T) {
 
 	t.Run("hero cannot heal when mana is low", func(t *testing.T) {
 		h := NewHero(0, 0)
+		reduce := 10
 
-		h.ReduceHealth(10)
+		h.ReduceHealth(reduce)
 		h.mana = 0
 
-		assertHealthEquals(t, 90, h.GetHealth())
+		assertHealthEquals(t, BaseHealth-reduce, h.GetHealth())
 
 		got := h.UseHeal()
 
-		assertHealthEquals(t, 90, h.GetHealth())
+		assertHealthEquals(t, BaseHealth-reduce, h.GetHealth())
 		if got != "Mana is too low." {
 			t.Errorf("returned message should be about low mana, got '%s'", got)
 		}
@@ -162,17 +165,35 @@ func TestHeroLevelUp(t *testing.T) {
 		h := NewHero(0, 0)
 
 		assertHeroLevel(h, 1)
-		for i := 1; i < 5; i++ {
+		for i := 1; i < MaxLevel; i++ {
 			exp := h.level.Next.ReqExperience - h.experience
 			h.GainExperience(exp)
 			assertHeroLevel(h, i+1)
 		}
 
 		h.GainExperience(100)
-		assertHeroLevel(h, 5)
+		assertHeroLevel(h, MaxLevel)
 
 		if !h.HasMaxLevel() {
 			t.Error("Hero should be at max level")
 		}
 	})
+}
+
+func TestHeroRegenerate(t *testing.T) {
+	h := NewHero(0, 0)
+	h.Entity.Health = 10
+	h.mana = 10
+
+	wantHP := h.Entity.Health + HealthRegen
+	wantMana := h.mana + ManaRegen
+
+	h.Regenerate()
+	if h.GetHealth() != wantHP {
+		t.Errorf("Hero health at %d, want %d", h.GetHealth(), wantHP)
+	}
+
+	if h.mana != wantMana {
+		t.Errorf("Hero health at %d, want %d", h.GetHealth(), wantMana)
+	}
 }

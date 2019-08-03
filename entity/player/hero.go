@@ -7,20 +7,27 @@ import (
 )
 
 const (
+	MaxLevel = 5
 	//Base attributes of the hero
 	BaseHealth = 150
 	BaseMana   = 60
 	BaseAttack = 15
+	//Modifiers
+	RegenTimeout = 8
+	HealthRegen  = 4
+	ManaRegen    = 2
 )
 
 // Hero a newborn hero
 type Hero struct {
+	//Position of the hero
+	Position Position
+	//Current values
 	entity.Entity
-	Position   Position
 	level      *Level
 	experience int
 	mana       int
-
+	//Maximum values
 	maxHealth int
 	maxMana   int
 }
@@ -28,7 +35,7 @@ type Hero struct {
 // NewHero creates new hero struct
 func NewHero(x, y int) *Hero {
 	h := &Hero{
-		level:     NewLevel(1, 5),
+		level:     NewLevel(1, MaxLevel),
 		mana:      BaseMana,
 		maxHealth: BaseHealth,
 		maxMana:   BaseMana,
@@ -67,9 +74,15 @@ func (h *Hero) UseHeal() string {
 	return fmt.Sprintf("Hero health restored by %d.", healAmount)
 }
 
-// Render shows how hero looks like on Location
-func (h Hero) Render() string {
-	return "*"
+// Regenerate restores Health and Mana
+func (h *Hero) Regenerate() {
+	if h.Health < h.maxHealth {
+		h.Health += HealthRegen
+	}
+
+	if h.mana < h.maxMana {
+		h.mana += ManaRegen
+	}
 }
 
 // GetStats returns current hero statistics
@@ -112,6 +125,11 @@ func (h *Hero) HasMaxLevel() bool {
 	}
 
 	return true
+}
+
+// Render shows how hero looks like on Location
+func (h Hero) Render() string {
+	return "*"
 }
 
 func (h *Hero) levelUp() {

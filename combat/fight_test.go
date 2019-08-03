@@ -10,13 +10,19 @@ func TestHeroFightsMonster(t *testing.T) {
 	t.Run("hero kills monster", func(t *testing.T) {
 		m := npc.NewMonster(1)
 		h := player.NewHero(0, 0)
+		attacks := 3
+
+		wantHp := h.GetHealth() - m.AttackPower()*attacks
 
 		c := NewCombat(h, m)
-		_, err := c.Fight()
-		if err != nil && m.IsAlive() {
+		for i := 0; i < attacks; i++ {
+			_, _ = c.Fight()
+		}
+
+		if m.IsAlive() {
 			t.Error("monster should be dead, but is still alive")
 		}
-		assertAttackerHealth(t, h, 95)
+		assertAttackerHealth(t, h, wantHp)
 	})
 
 	t.Run("hero cant kill dead monster", func(t *testing.T) {
@@ -36,11 +42,11 @@ func TestHeroFightsMonster(t *testing.T) {
 func TestDefenderAttacksAttackedBack(t *testing.T) {
 	m := npc.NewMonster(1)
 	h := player.NewHero(0, 0)
+	wantHp := h.GetHealth() - m.AttackPower()
 
 	c := NewCombat(h, m)
-
 	_ = c.AttackBack()
-	assertAttackerHealth(t, h, 95)
+	assertAttackerHealth(t, h, wantHp)
 }
 
 func assertAttackerHealth(t *testing.T, attacker Fightable, want int) {

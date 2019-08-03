@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"swarm/entity/player"
 	"swarm/game"
 	"time"
 
@@ -19,7 +20,9 @@ func main() {
 
 	gameOver := false
 	uiEvents := ui.PollEvents()
-	ticker := time.NewTicker(g.Config.MonsterSpawn).C
+
+	tick := time.NewTicker(time.Second * 1).C
+	second := int64(0)
 	for {
 		if gameOver {
 			e := <-uiEvents
@@ -48,8 +51,15 @@ func main() {
 					gameOver = true
 				}
 			}
-		case <-ticker:
-			g.CurrentLocation.PlaceMonsters(g.Config.MonstersSpawnNum)
+		case <-tick:
+			second++
+			if second%g.Config.MonsterSpawn == 0 {
+				go g.CurrentLocation.PlaceMonsters(g.Config.MonstersSpawnNum)
+			}
+
+			if second%player.RegenTimeout == 0 {
+				go g.Hero.Regenerate()
+			}
 		}
 
 		g.UpdateView()

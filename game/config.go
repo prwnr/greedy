@@ -4,14 +4,13 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"os"
-	"time"
 )
 
 // Config for current game
 type Config struct {
-	MonsterSpawn     time.Duration `json:"monster_spawn,omitempty"`
-	MonstersSpawnNum int           `json:"monsters_spawn_num,omitempty"`
-	LocationSize     int           `json:"location_size,omitempty"`
+	MonsterSpawn     int64 `json:"monster_spawn,omitempty"`
+	MonstersSpawnNum int   `json:"monsters_spawn_num,omitempty"`
+	LocationSize     int   `json:"location_size,omitempty"`
 }
 
 func loadConfig(g *Game) {
@@ -28,6 +27,5 @@ func loadConfig(g *Game) {
 		_ = json.Unmarshal(bytes, &config)
 	}
 
-	config.MonsterSpawn = config.MonsterSpawn * time.Second
 	g.Config = config
 }

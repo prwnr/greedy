@@ -24,7 +24,7 @@ func TestMonsterFighting(t *testing.T) {
 		second := NewMonster(2)
 
 		secondGot := second.GetHealth()
-		if secondGot != 60 {
+		if secondGot != 65 {
 			t.Errorf("monster level 2 should have 60 HP upon creation, has %d", secondGot)
 		}
 	})
@@ -72,9 +72,9 @@ func TestMonsterGetExperienceValue(t *testing.T) {
 		level int
 		want  int
 	}{
-		{"1 lvl mob gives 15 exp", 1, 15},
-		{"2 lvl mob gives 30 exp", 2, 30},
-		{"5 lvl mob gives 75 exp", 5, 75},
+		{"1 lvl mob gives 15 exp", 1, BaseExperience * 1},
+		{"2 lvl mob gives 30 exp", 2, BaseExperience * 2},
+		{"5 lvl mob gives 75 exp", 5, BaseExperience * 5},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
