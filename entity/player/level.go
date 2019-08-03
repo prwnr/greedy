@@ -29,5 +29,5 @@ func NewLevel(number, max int) *Level {
 func calculateLevelExperience(num int) int {
 	i := (num - 1) * 100
 
-	return i + int(float64(i)*0.1)*(num-1)
+	return i + int(float64(i)*0.2)*(num-1)
 }

@@ -7,8 +7,9 @@ import (
 )
 
 const (
-	BaseHealth = 100
-	BaseMana   = 50
+	//Base attributes of the hero
+	BaseHealth = 150
+	BaseMana   = 60
 	BaseAttack = 15
 )
 
@@ -49,17 +50,19 @@ func (h *Hero) AttackPower() int {
 
 // UseHeal activates given hero skill
 func (h *Hero) UseHeal() string {
-	if h.mana <= 0 {
+	reqMana := 11 - h.level.Number
+
+	if h.mana <= 0 || reqMana > h.mana {
 		return fmt.Sprint("Mana is too low.")
 	}
 
-	if h.GetHealth() == h.maxHealth {
+	if h.GetHealth() >= h.maxHealth {
 		return fmt.Sprintf("Hero health restored by %d.", 0)
 	}
 
 	healAmount := 5 * h.level.Number
 	h.Entity.Health += healAmount
-	h.mana -= 11 - h.level.Number
+	h.mana -= reqMana
 
 	return fmt.Sprintf("Hero health restored by %d.", healAmount)
 }
@@ -72,7 +75,7 @@ func (h Hero) Render() string {
 // GetStats returns current hero statistics
 func (h *Hero) GetStats() [][]string {
 	var reqExp int
-	if !h.MaxLevel() {
+	if !h.HasMaxLevel() {
 		reqExp = h.level.Next.ReqExperience
 	} else {
 		reqExp = h.experience
@@ -90,7 +93,7 @@ func (h *Hero) GetStats() [][]string {
 // GainExperience adds exp to hero.
 // Call LevelUp method once required experience is met.
 func (h *Hero) GainExperience(amount int) string {
-	if h.MaxLevel() {
+	if h.HasMaxLevel() {
 		return ""
 	}
 
@@ -102,8 +105,8 @@ func (h *Hero) GainExperience(amount int) string {
 	return fmt.Sprintf("Gained %d experience.\r\n", amount)
 }
 
-// MaxLevel determines if hero reached his maximum possible level.
-func (h *Hero) MaxLevel() bool {
+// HasMaxLevel determines if hero reached his maximum possible level.
+func (h *Hero) HasMaxLevel() bool {
 	if h.level.Next != nil {
 		return false
 	}
@@ -112,15 +115,15 @@ func (h *Hero) MaxLevel() bool {
 }
 
 func (h *Hero) levelUp() {
-	if h.MaxLevel() {
+	if h.HasMaxLevel() {
 		return
 	}
 
 	h.level = h.level.Next
 	h.Attack = BaseAttack + h.level.Number*2
-	h.maxHealth = BaseHealth + h.level.Number*50
+	h.maxHealth = BaseHealth + h.level.Number*25
 	h.Health = h.maxHealth
-	h.maxMana = BaseMana + h.level.Number*20
+	h.maxMana = BaseMana + h.level.Number*10
 	h.mana = h.maxMana
 }
 

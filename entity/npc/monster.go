@@ -6,8 +6,9 @@ import (
 )
 
 const (
-	BaseHealth = 30
-	BaseAttack = 5
+	BaseHealth     = 30
+	BaseAttack     = 5
+	BaseExperience = 10
 )
 
 var LevelLook = map[int]string{1: "#", 2: "$", 3: "@"}
@@ -29,7 +30,7 @@ func NewMonster(level int) *Monster {
 		level: l,
 	}
 
-	m.maxHealth = BaseHealth * l.Number
+	m.maxHealth = BaseHealth*l.Number + (int(float64(l.Number-1) * 5))
 	m.Entity.Health = m.maxHealth
 	m.Entity.Attack = BaseAttack * l.Number
 
@@ -38,7 +39,7 @@ func NewMonster(level int) *Monster {
 
 // GetExperienceValue returns how much experience monster is worth.
 func (m *Monster) GetExperienceValue() int {
-	return 15 * m.level.Number
+	return BaseExperience * m.level.Number
 }
 
 // Render monster look

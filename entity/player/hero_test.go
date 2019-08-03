@@ -171,7 +171,7 @@ func TestHeroLevelUp(t *testing.T) {
 		h.GainExperience(100)
 		assertHeroLevel(h, 5)
 
-		if !h.MaxLevel() {
+		if !h.HasMaxLevel() {
 			t.Error("Hero should be at max level")
 		}
 	})
