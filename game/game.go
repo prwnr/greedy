@@ -38,20 +38,21 @@ const (
 
 // NewGame starts new game with all requirements.
 func NewGame() Game {
-	game := Game{}
+	g := Game{}
 
-	loadConfig(&game)
+	loadConfig(&g)
 
-	game.View = view.NewView()
-	game.Hero = player.NewHero(0, game.Config.LocationSize-1)
-	game.CurrentLocation = world.NewLocation(game.Config.LocationSize)
+	g.View = view.NewView()
+	g.Hero = player.NewHero(0, g.Config.LocationSize-1)
+	g.CurrentLocation = world.NewLocation(g.Config.LocationSize)
 
-	game.CurrentLocation.PlaceHero(game.Hero)
-	game.View.UpdateLocation(game.CurrentLocation.RenderPlaces())
+	g.CurrentLocation.PlaceHero(g.Hero)
+	g.View.UpdateLocation(g.CurrentLocation.RenderPlaces())
 
-	game.View.UpdateHeroStats(game.Hero.GetStats())
+	g.View.UpdateHeroStats(g.Hero.GetStats())
+	g.View.UpdateSkillBar(g.Hero.Skills())
 
-	return game
+	return g
 }
 
 // PlayerAction changes hero position
@@ -90,7 +91,7 @@ func (g *Game) PlayerAction(action string) {
 
 		return
 	case Heal:
-		res := g.Hero.UseHeal()
+		res := g.Hero.UseSkill(Heal)
 		g.View.UpdateCombatLog(res)
 
 		return
@@ -111,6 +112,7 @@ func (g *Game) PlayerAction(action string) {
 func (g *Game) UpdateView() {
 	g.View.UpdateLocation(g.CurrentLocation.RenderPlaces())
 	g.View.UpdateHeroStats(g.Hero.GetStats())
+	g.View.UpdateSkillBar(g.Hero.Skills())
 
 	currPlace := g.CurrentLocation.GetHeroPlace(g.Hero)
 	if currPlace.IsOccupied() {

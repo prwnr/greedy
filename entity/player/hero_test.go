@@ -75,58 +75,6 @@ func TestHeroFighting(t *testing.T) {
 	})
 }
 
-func TestHeroSkills(t *testing.T) {
-	assertHealthEquals := func(t *testing.T, want, got int) {
-		if want != got {
-			t.Errorf("expected hero health to be at %d, but got %d", want, got)
-		}
-	}
-
-	t.Run("hero heals himself", func(t *testing.T) {
-		h := NewHero(0, 0)
-		reduce := 10
-
-		h.ReduceHealth(reduce)
-		assertHealthEquals(t, BaseHealth-reduce, h.GetHealth())
-
-		got := h.UseHeal()
-
-		assertHealthEquals(t, BaseHealth-reduce+5, h.GetHealth())
-		if got != "Hero health restored by 5." {
-			t.Errorf("healing message is invalid, got '%s'", got)
-		}
-	})
-
-	t.Run("hero cannot over heal", func(t *testing.T) {
-		h := NewHero(0, 0)
-		assertHealthEquals(t, BaseHealth, h.GetHealth())
-
-		got := h.UseHeal()
-
-		assertHealthEquals(t, BaseHealth, h.GetHealth())
-		if got != "Hero health restored by 0." {
-			t.Errorf("healing message is invalid, got '%s'", got)
-		}
-	})
-
-	t.Run("hero cannot heal when mana is low", func(t *testing.T) {
-		h := NewHero(0, 0)
-		reduce := 10
-
-		h.ReduceHealth(reduce)
-		h.mana = 0
-
-		assertHealthEquals(t, BaseHealth-reduce, h.GetHealth())
-
-		got := h.UseHeal()
-
-		assertHealthEquals(t, BaseHealth-reduce, h.GetHealth())
-		if got != "Mana is too low." {
-			t.Errorf("returned message should be about low mana, got '%s'", got)
-		}
-	})
-}
-
 func TestHeroGainExperience(t *testing.T) {
 	tests := []struct {
 		name      string
