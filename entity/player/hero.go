@@ -61,13 +61,14 @@ func (h *Hero) AttackPower() int {
 }
 
 // UseSkill selects and casts skill
-func (h *Hero) UseSkill(num string) string {
+func (h *Hero) UseSkill(num string) Result {
+	var res Result
 	if skill, ok := h.skills[num]; ok {
-		res := skill.Cast(h)
-		return res.Message
+		res = skill.Cast(h)
+		return res
 	}
 
-	return ""
+	return res
 }
 
 // Regenerate restores Health and Mana

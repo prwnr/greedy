@@ -2,8 +2,8 @@ package game
 
 import (
 	"fmt"
-	"swarm/combat"
 	"swarm/common"
+	"swarm/entity"
 	"swarm/entity/player"
 	"swarm/view"
 	"swarm/world"
@@ -63,18 +63,9 @@ func (g *Game) PlayerAction(action string) {
 	hero := currPlace.GetHero()
 	monster := currPlace.GetMonster()
 
-	switch action {
-	case MoveUp:
-		g.Hero.MoveUp()
-	case MoveDown:
-		g.Hero.MoveDown(maxStep)
-	case MoveLeft:
-		g.Hero.MoveLeft()
-	case MoveRight:
-		g.Hero.MoveRight(maxStep)
-	case Attack:
-		if currPlace.IsOccupied() {
-			c := combat.NewCombat(hero, monster)
+	if isSkillAction(action) {
+		if currPlace.IsOccupied() && action == Attack {
+			c := entity.NewCombat(hero, monster)
 			res, err := c.Fight()
 			if err != nil {
 				_ = fmt.Errorf("fight error: %v", err)
@@ -89,17 +80,26 @@ func (g *Game) PlayerAction(action string) {
 			}
 		}
 
-		return
-	case Heal:
-		res := g.Hero.UseSkill(Heal)
-		g.View.UpdateCombatLog(res)
+		if action == Heal {
+			res := g.Hero.UseSkill(Heal)
+			g.View.UpdateCombatLog(res.Message)
+		}
+	}
 
-		return
+	switch action {
+	case MoveUp:
+		g.Hero.MoveUp()
+	case MoveDown:
+		g.Hero.MoveDown(maxStep)
+	case MoveLeft:
+		g.Hero.MoveLeft()
+	case MoveRight:
+		g.Hero.MoveRight(maxStep)
 	}
 
 	move := []string{MoveUp, MoveRight, MoveLeft, MoveDown}
 	if currPlace.IsOccupied() && common.SliceContains(move, action) {
-		c := combat.NewCombat(hero, monster)
+		c := entity.NewCombat(hero, monster)
 		res := c.AttackBack()
 		g.View.UpdateCombatLog(res)
 	}
@@ -120,4 +120,9 @@ func (g *Game) UpdateView() {
 	} else {
 		g.View.HideMonster()
 	}
+}
+
+func isSkillAction(action string) bool {
+	skill := []string{Attack, Heal}
+	return common.SliceContains(skill, action)
 }

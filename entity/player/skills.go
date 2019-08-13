@@ -2,6 +2,7 @@ package player
 
 import (
 	"fmt"
+	"swarm/common"
 	"time"
 )
 
@@ -9,7 +10,17 @@ import (
 type Skill struct {
 	Name     string
 	CoolDown int
+	Type     SkillType
 }
+
+// SkillType defines type of the skill
+type SkillType int
+
+// Skill types
+const (
+	Offensive = 1
+	Defensive = 2
+)
 
 // starts internal skill recharge cool down
 func (s *Skill) startCoolDown(cd int) {
@@ -49,6 +60,8 @@ type Castable interface {
 // Result returns what skill did
 type Result struct {
 	Message string
+	Type    SkillType
+	Power   int
 }
 
 // HealingSkill structure
@@ -61,6 +74,7 @@ func NewHealingSkill() *HealingSkill {
 	return &HealingSkill{Skill{
 		Name:     "Heal",
 		CoolDown: 0,
+		Type:     Defensive,
 	}}
 }
 
@@ -90,6 +104,30 @@ func (s *HealingSkill) Cast(h *Hero) Result {
 
 	r.Message = fmt.Sprintf("Hero health restored by %d.", healAmount)
 
+	r.Type = s.Type
 	s.startCoolDown(5)
+	return r
+}
+
+// BasicAttackSkill
+type BasicAttackSkill struct {
+	Skill
+}
+
+// NewBasicAttackSkill creates healing skill.
+func NewBasicAttackSkill() *BasicAttackSkill {
+	return &BasicAttackSkill{Skill{
+		Name:     "Heal",
+		CoolDown: 0,
+		Type:     Offensive,
+	}}
+}
+
+// Cast uses a skill and starts its cool down
+func (s *BasicAttackSkill) Cast(h *Hero) Result {
+	r := Result{Type: s.Type}
+	r.Power = common.RandomMinNumber(h.Entity.AttackPower()-5, h.Entity.AttackPower())
+	s.startCoolDown(1)
+
 	return r
 }
