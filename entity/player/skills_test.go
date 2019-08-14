@@ -104,9 +104,9 @@ func TestHeroHealingSkill(t *testing.T) {
 			h.Health = tt.args.heroHealth
 			h.mana = tt.args.heroMana
 
-			s := NewHealingSkill()
+			s := NewHealingSkill(h)
 
-			if got := s.Cast(h); got.Message != tt.wantMessage {
+			if got := s.Cast(nil); got.Message != tt.wantMessage {
 				t.Errorf("Cast() = %v, want %v", got, tt.wantMessage)
 			}
 			assertHealthEquals(t, tt.wantHealth, h.Health)

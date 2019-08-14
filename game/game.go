@@ -1,9 +1,11 @@
 package game
 
 import (
+	"errors"
 	"fmt"
 	"swarm/common"
 	"swarm/entity"
+	"swarm/entity/npc"
 	"swarm/entity/player"
 	"swarm/view"
 	"swarm/world"
@@ -64,9 +66,8 @@ func (g *Game) PlayerAction(action string) {
 	monster := currPlace.GetMonster()
 
 	if isSkillAction(action) {
-		if currPlace.IsOccupied() && action == Attack {
-			c := entity.NewCombat(hero, monster)
-			res, err := c.Fight()
+		if currPlace.IsOccupied() {
+			res, err := Fight(hero, monster, action)
 			if err != nil {
 				_ = fmt.Errorf("fight error: %v", err)
 			} else {
@@ -78,11 +79,11 @@ func (g *Game) PlayerAction(action string) {
 				}
 				g.View.UpdateCombatLog(res)
 			}
-		}
-
-		if action == Heal {
-			res := g.Hero.UseSkill(Heal)
-			g.View.UpdateCombatLog(res.Message)
+		} else {
+			if action == Heal {
+				res := g.Hero.UseSkill(Heal, nil)
+				g.View.UpdateCombatLog(res.Message)
+			}
 		}
 	}
 
@@ -125,4 +126,22 @@ func (g *Game) UpdateView() {
 func isSkillAction(action string) bool {
 	skill := []string{Attack, Heal}
 	return common.SliceContains(skill, action)
+}
+
+// Fight action between attacker and defender
+func Fight(h *player.Hero, m *npc.Monster, skill string) (string, error) {
+	if !m.IsAlive() {
+		return "", errors.New("cannot attack dead monster")
+	}
+
+	res := h.UseSkill(skill, m)
+
+	result := res.Message
+
+	monsterHit := m.AttackPower()
+	h.ReduceHealth(monsterHit)
+
+	result += fmt.Sprintf("Monster hit you for %d damage. %d HP left \r\n", monsterHit, h.GetHealth())
+
+	return result, nil
 }

@@ -2,6 +2,7 @@ package player
 
 import (
 	"fmt"
+	"sort"
 	"swarm/common"
 	"swarm/entity"
 )
@@ -50,7 +51,8 @@ func NewHero(x, y int) *Hero {
 	h.Position.Y = y
 
 	h.skills = make(map[string]Castable)
-	h.skills["2"] = NewHealingSkill()
+	h.skills["1"] = NewBasicAttackSkill(h)
+	h.skills["2"] = NewHealingSkill(h)
 
 	return h
 }
@@ -61,10 +63,10 @@ func (h *Hero) AttackPower() int {
 }
 
 // UseSkill selects and casts skill
-func (h *Hero) UseSkill(num string) Result {
+func (h *Hero) UseSkill(num string, target Killable) Result {
 	var res Result
 	if skill, ok := h.skills[num]; ok {
-		res = skill.Cast(h)
+		res = skill.Cast(target)
 		return res
 	}
 
@@ -132,7 +134,15 @@ func (h *Hero) GetStats() [][]string {
 // Skills return all available hero skills with their cool downs
 func (h *Hero) Skills() [][]string {
 	var skills [][]string
-	for i, s := range h.skills {
+	var order []string
+	for k := range h.skills {
+		order = append(order, k)
+	}
+
+	sort.Strings(order)
+
+	for _, i := range order {
+		s := h.skills[i]
 		skill := []string{fmt.Sprintf("%s: %s", i, s.GetName()), fmt.Sprintf("%d", s.CurrentCoolDown())}
 		skills = append(skills, skill)
 	}

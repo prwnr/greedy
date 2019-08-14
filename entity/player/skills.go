@@ -11,6 +11,7 @@ type Skill struct {
 	Name     string
 	CoolDown int
 	Type     SkillType
+	Hero     *Hero
 }
 
 // SkillType defines type of the skill
@@ -54,7 +55,7 @@ func (s *Skill) CurrentCoolDown() int {
 type Castable interface {
 	GetName() string
 	CurrentCoolDown() int
-	Cast(h *Hero) Result
+	Cast(target Killable) Result
 }
 
 // Result returns what skill did
@@ -70,37 +71,38 @@ type HealingSkill struct {
 }
 
 // NewHealingSkill creates healing skill.
-func NewHealingSkill() *HealingSkill {
+func NewHealingSkill(h *Hero) *HealingSkill {
 	return &HealingSkill{Skill{
 		Name:     "Heal",
 		CoolDown: 0,
 		Type:     Defensive,
+		Hero:     h,
 	}}
 }
 
 // Cast uses a skill and starts its cool down
-func (s *HealingSkill) Cast(h *Hero) Result {
+func (s *HealingSkill) Cast(target Killable) Result {
 	var r Result
 	if s.CoolDown > 0 {
 		r.Message = "Cannot use skill, still recharging."
 		return r
 	}
 
-	reqMana := 11 - h.level.Number
+	reqMana := 11 - s.Hero.level.Number
 
-	if h.mana <= 0 || reqMana > h.mana {
+	if s.Hero.mana <= 0 || reqMana > s.Hero.mana {
 		r.Message = "Mana is too low."
 		return r
 	}
 
-	if h.GetHealth() >= h.maxHealth {
+	if s.Hero.GetHealth() >= s.Hero.maxHealth {
 		r.Message = fmt.Sprintf("Hero health restored by %d.", 0)
 		return r
 	}
 
-	healAmount := 5 * h.level.Number
-	h.Entity.Health += healAmount
-	h.mana -= reqMana
+	healAmount := 5 * s.Hero.level.Number
+	s.Hero.Entity.Health += healAmount
+	s.Hero.mana -= reqMana
 
 	r.Message = fmt.Sprintf("Hero health restored by %d.", healAmount)
 
@@ -114,19 +116,34 @@ type BasicAttackSkill struct {
 	Skill
 }
 
+type Killable interface {
+	ReduceHealth(amount int)
+	GetHealth() int
+}
+
 // NewBasicAttackSkill creates healing skill.
-func NewBasicAttackSkill() *BasicAttackSkill {
+func NewBasicAttackSkill(h *Hero) *BasicAttackSkill {
 	return &BasicAttackSkill{Skill{
-		Name:     "Heal",
+		Name:     "Attack",
 		CoolDown: 0,
 		Type:     Offensive,
+		Hero:     h,
 	}}
 }
 
 // Cast uses a skill and starts its cool down
-func (s *BasicAttackSkill) Cast(h *Hero) Result {
-	r := Result{Type: s.Type}
-	r.Power = common.RandomMinNumber(h.Entity.AttackPower()-5, h.Entity.AttackPower())
+func (s *BasicAttackSkill) Cast(target Killable) Result {
+	var r Result
+	if s.CoolDown > 0 {
+		r.Message = "Cannot use skill, still recharging."
+		return r
+	}
+	r.Power = common.RandomMinNumber(s.Hero.Entity.AttackPower()-5, s.Hero.Entity.AttackPower())
+	if target != nil {
+		target.ReduceHealth(r.Power)
+		r.Message = fmt.Sprintf("You hit monster for %d damage, monster has %d HP left \r\n", r.Power, target.GetHealth())
+	}
+
 	s.startCoolDown(1)
 
 	return r
