@@ -28,14 +28,11 @@ func (s *Skill) startCoolDown(cd int) {
 	s.CoolDown = cd
 	go func() {
 		ticker := time.NewTicker(time.Second * 1)
-		for {
-			select {
-			case <-ticker.C:
-				s.CoolDown--
-				if s.CoolDown == 0 {
-					ticker.Stop()
-					return
-				}
+		for _ = range ticker.C {
+			s.CoolDown--
+			if s.CoolDown <= 0 {
+				ticker.Stop()
+				return
 			}
 		}
 	}()

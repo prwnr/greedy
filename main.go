@@ -21,12 +21,28 @@ func main() {
 	gameOver := false
 	uiEvents := ui.PollEvents()
 
+	end := make(chan bool)
+	go func() {
+		t := time.NewTicker(time.Millisecond * 200)
+		defer t.Stop()
+		for {
+			select {
+			case <-t.C:
+				g.View.UpdateSkillBar(g.Hero.Skills())
+				ui.Render(g.View.All()...)
+			case <-end:
+				return
+			}
+		}
+	}()
+
 	tick := time.NewTicker(time.Second * 1).C
 	second := int64(0)
 	for {
 		if gameOver {
 			e := <-uiEvents
 			if e.ID == "q" || e.ID == "<C-c>" {
+				end <- true
 				return
 			}
 
@@ -43,6 +59,7 @@ func main() {
 		case e := <-uiEvents:
 			switch e.ID {
 			case "q", "<C-c>":
+				end <- true
 				return
 			default:
 				g.PlayerAction(e.ID)

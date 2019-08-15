@@ -113,7 +113,6 @@ func (g *Game) PlayerAction(action string) {
 func (g *Game) UpdateView() {
 	g.View.UpdateLocation(g.CurrentLocation.RenderPlaces())
 	g.View.UpdateHeroStats(g.Hero.GetStats())
-	g.View.UpdateSkillBar(g.Hero.Skills())
 
 	currPlace := g.CurrentLocation.GetHeroPlace(g.Hero)
 	if currPlace.IsOccupied() {
