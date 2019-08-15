@@ -29,7 +29,7 @@ func main() {
 			select {
 			case <-t.C:
 				g.View.UpdateSkillBar(g.Hero.Skills())
-				ui.Render(g.View.All()...)
+				ui.Render(g.View.SkillsBar)
 			case <-end:
 				return
 			}
