@@ -12,7 +12,12 @@ type Skill struct {
 	CoolDown int
 	Type     SkillType
 	Hero     *Hero
+	Update   chan bool
 }
+
+// RechargeSkill channel that triggers when skill CD is started
+// and counts down
+var RechargeSkill = make(chan bool)
 
 // SkillType defines type of the skill
 type SkillType int
@@ -26,10 +31,12 @@ const (
 // starts internal skill recharge cool down
 func (s *Skill) startCoolDown(cd int) {
 	s.CoolDown = cd
+	RechargeSkill <- true
 	go func() {
 		ticker := time.NewTicker(time.Second * 1)
 		for _ = range ticker.C {
 			s.CoolDown--
+			RechargeSkill <- true
 			if s.CoolDown <= 0 {
 				ticker.Stop()
 				return

@@ -23,11 +23,9 @@ func main() {
 
 	end := make(chan bool)
 	go func() {
-		t := time.NewTicker(time.Millisecond * 200)
-		defer t.Stop()
 		for {
 			select {
-			case <-t.C:
+			case <-player.RechargeSkill:
 				g.View.UpdateSkillBar(g.Hero.Skills())
 				ui.Render(g.View.SkillsBar)
 			case <-end:

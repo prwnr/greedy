@@ -82,23 +82,26 @@ func (g *Game) PlayerAction(action string) {
 				g.View.UpdateCombatLog(res.Message)
 			}
 		}
+
+		return
 	}
 
-	switch action {
-	case MoveUp:
-		g.Hero.MoveUp()
-	case MoveDown:
-		g.Hero.MoveDown(maxStep)
-	case MoveLeft:
-		g.Hero.MoveLeft()
-	case MoveRight:
-		g.Hero.MoveRight(maxStep)
-	}
+	if isMovement(action) {
+		switch action {
+		case MoveUp:
+			g.Hero.MoveUp()
+		case MoveDown:
+			g.Hero.MoveDown(maxStep)
+		case MoveLeft:
+			g.Hero.MoveLeft()
+		case MoveRight:
+			g.Hero.MoveRight(maxStep)
+		}
 
-	move := []string{MoveUp, MoveRight, MoveLeft, MoveDown}
-	if currPlace.IsOccupied() && common.SliceContains(move, action) {
-		res := fightBack(hero, monster)
-		g.View.UpdateCombatLog(res)
+		if currPlace.IsOccupied() {
+			res := fightBack(hero, monster)
+			g.View.UpdateCombatLog(res)
+		}
 	}
 
 	currPlace.RemoveHero()
@@ -121,4 +124,9 @@ func (g *Game) UpdateView() {
 func isSkillAction(action string) bool {
 	skill := []string{Attack, Heal}
 	return common.SliceContains(skill, action)
+}
+
+func isMovement(action string) bool {
+	move := []string{MoveUp, MoveRight, MoveLeft, MoveDown}
+	return common.SliceContains(move, action)
 }
