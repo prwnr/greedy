@@ -1,6 +1,8 @@
 package player
 
 import (
+	"regexp"
+	"swarm/entity"
 	"testing"
 	"time"
 )
@@ -11,22 +13,24 @@ func TestSkillStartCoolDown(t *testing.T) {
 		CoolDown: 0,
 	}
 
-	s.startCoolDown(1)
-	assertNumberEquals(t, 1, s.CoolDown)
+	go assertRechargeChannelReceived(t)
+	s.startCoolDown(0.5)
 
-	time.Sleep(time.Millisecond * 1200)
+	assertNumberEquals(t, 0.5, s.CoolDown)
+
+	time.Sleep(time.Millisecond * 600)
 	assertNumberEquals(t, 0, s.CoolDown)
 }
 
 func TestSkillCurrentCoolDown(t *testing.T) {
 	type fields struct {
 		Name     string
-		CoolDown int
+		CoolDown float64
 	}
 	tests := []struct {
 		name   string
 		fields fields
-		want   int
+		want   float64
 	}{
 		{"returns current cool down", fields{Name: "Foo", CoolDown: 5}, 5},
 		{"returns current cool down", fields{Name: "Foo", CoolDown: 2}, 2},
@@ -37,6 +41,7 @@ func TestSkillCurrentCoolDown(t *testing.T) {
 				Name:     tt.fields.Name,
 				CoolDown: tt.fields.CoolDown,
 			}
+			go assertRechargeChannelReceived(t)
 			if got := s.CurrentCoolDown(); got != tt.want {
 				t.Errorf("CurrentCoolDown() = %v, want %v", got, tt.want)
 			}
@@ -47,7 +52,7 @@ func TestSkillCurrentCoolDown(t *testing.T) {
 func TestSkillGetName(t *testing.T) {
 	type fields struct {
 		Name     string
-		CoolDown int
+		CoolDown float64
 	}
 	tests := []struct {
 		name   string
@@ -67,12 +72,6 @@ func TestSkillGetName(t *testing.T) {
 				t.Errorf("GetName() = %v, want %v", got, tt.want)
 			}
 		})
-	}
-}
-
-func assertNumberEquals(t *testing.T, want, got int) {
-	if want != got {
-		t.Errorf("want %d, got %d", want, got)
 	}
 }
 
@@ -106,10 +105,74 @@ func TestHeroHealingSkill(t *testing.T) {
 
 			s := NewHealingSkill(h)
 
+			go assertRechargeChannelReceived(t)
 			if got := s.Cast(nil); got.Message != tt.wantMessage {
 				t.Errorf("Cast() = %v, want %v", got, tt.wantMessage)
 			}
 			assertHealthEquals(t, tt.wantHealth, h.Health)
 		})
+	}
+}
+
+func TestHeroAttackSkill(t *testing.T) {
+	type args struct {
+		heroHealth int
+		heroMana   int
+	}
+
+	tests := []struct {
+		name         string
+		wantMessage  string
+		wantMinPower int
+		wantMaxPower int
+		target       Killable
+	}{
+		{"hero attacks monster",
+			"You hit monster for \\d* damage, monster has \\d* HP left \r\n",
+			10,
+			15,
+			&entity.Entity{
+				Health: 100,
+				Attack: 1,
+			},
+		},
+		{"hero cant attack nil target",
+			"",
+			10,
+			15,
+			nil,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			h := NewHero(0, 0)
+			s := NewBasicAttackSkill(h)
+
+			go assertRechargeChannelReceived(t)
+			got := s.Cast(tt.target)
+			if got.Power < tt.wantMinPower || got.Power > tt.wantMaxPower {
+				t.Errorf("Cast() power = %v, want power between %v, %v", got.Power, tt.wantMinPower, tt.wantMaxPower)
+			}
+
+			res, err := regexp.MatchString(tt.wantMessage, got.Message)
+			if res != true || err != nil {
+				t.Errorf("Cast() = %v, want %v", got.Message, tt.wantMessage)
+			}
+		})
+	}
+}
+
+func assertNumberEquals(t *testing.T, want, got float64) {
+	if want != got {
+		t.Errorf("want %f, got %f", want, got)
+	}
+}
+
+func assertRechargeChannelReceived(t *testing.T) {
+	for {
+		res := <-RechargeSkill
+		if res != true {
+			t.Errorf("RechargeSkill channel is not true")
+		}
 	}
 }

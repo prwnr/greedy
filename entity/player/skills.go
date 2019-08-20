@@ -9,7 +9,7 @@ import (
 // Skill structure
 type Skill struct {
 	Name     string
-	CoolDown int
+	CoolDown float64
 	Type     SkillType
 	Hero     *Hero
 	Update   chan bool
@@ -29,13 +29,13 @@ const (
 )
 
 // starts internal skill recharge cool down
-func (s *Skill) startCoolDown(cd int) {
+func (s *Skill) startCoolDown(cd float64) {
 	s.CoolDown = cd
 	RechargeSkill <- true
 	go func() {
-		ticker := time.NewTicker(time.Second * 1)
+		ticker := time.NewTicker(time.Millisecond * 500)
 		for _ = range ticker.C {
-			s.CoolDown--
+			s.CoolDown -= 0.5
 			RechargeSkill <- true
 			if s.CoolDown <= 0 {
 				ticker.Stop()
@@ -51,14 +51,14 @@ func (s *Skill) GetName() string {
 }
 
 // CurrentCoolDown returns internal recharge cool down
-func (s *Skill) CurrentCoolDown() int {
+func (s *Skill) CurrentCoolDown() float64 {
 	return s.CoolDown
 }
 
 // Castable defines skill
 type Castable interface {
 	GetName() string
-	CurrentCoolDown() int
+	CurrentCoolDown() float64
 	Cast(target Killable) Result
 }
 
@@ -148,7 +148,7 @@ func (s *BasicAttackSkill) Cast(target Killable) Result {
 		r.Message = fmt.Sprintf("You hit monster for %d damage, monster has %d HP left \r\n", r.Power, target.GetHealth())
 	}
 
-	s.startCoolDown(1)
+	s.startCoolDown(0.5)
 
 	return r
 }
