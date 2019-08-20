@@ -144,7 +144,7 @@ func (h *Hero) Skills() [][]string {
 	var names, cds []string
 	for _, i := range order {
 		s := h.skills[i]
-		names = append(names, s.GetName())
+		names = append(names, fmt.Sprintf("%s:%s", i, s.GetName()))
 		cds = append(cds, fmt.Sprintf("%.1f", s.CurrentCoolDown()))
 	}
 
