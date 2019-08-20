@@ -134,7 +134,6 @@ func (h *Hero) GetStats() [][]string {
 
 // Skills return all available hero skills with their cool downs
 func (h *Hero) Skills() [][]string {
-	var skills [][]string
 	var order []string
 	for k := range h.skills {
 		order = append(order, k)
@@ -142,13 +141,16 @@ func (h *Hero) Skills() [][]string {
 
 	sort.Strings(order)
 
+	var names, cds []string
 	for _, i := range order {
 		s := h.skills[i]
-		skill := []string{fmt.Sprintf("%s: %s", i, s.GetName()), fmt.Sprintf("%.1f", s.CurrentCoolDown())}
-		skills = append(skills, skill)
+		names = append(names, s.GetName())
+		cds = append(cds, fmt.Sprintf("%.1f", s.CurrentCoolDown()))
 	}
 
-	return skills
+	return [][]string{
+		names, cds,
+	}
 }
 
 func (h *Hero) levelUp() {
