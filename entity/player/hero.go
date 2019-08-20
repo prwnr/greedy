@@ -53,6 +53,7 @@ func NewHero(x, y int) *Hero {
 	h.skills = make(map[string]Castable)
 	h.skills["1"] = NewBasicAttackSkill(h)
 	h.skills["2"] = NewHealingSkill(h)
+	h.skills["3"] = NewHeavyAttackSkill(h)
 
 	return h
 }

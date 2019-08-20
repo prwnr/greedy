@@ -93,7 +93,6 @@ func (s *HealingSkill) Cast(target Killable) Result {
 	}
 
 	reqMana := 11 - s.Hero.level.Number
-
 	if s.Hero.mana <= 0 || reqMana > s.Hero.mana {
 		r.Message = "Mana is too low."
 		return r
@@ -125,7 +124,7 @@ type Killable interface {
 	GetHealth() int
 }
 
-// NewBasicAttackSkill creates healing skill.
+// NewBasicAttackSkill creates basic attack skill.
 func NewBasicAttackSkill(h *Hero) *BasicAttackSkill {
 	return &BasicAttackSkill{Skill{
 		Name:     "Attack",
@@ -145,10 +144,52 @@ func (s *BasicAttackSkill) Cast(target Killable) Result {
 	r.Power = common.RandomMinNumber(s.Hero.Entity.AttackPower()-5, s.Hero.Entity.AttackPower())
 	if target != nil {
 		target.ReduceHealth(r.Power)
-		r.Message = fmt.Sprintf("You hit monster for %d damage, monster has %d HP left \r\n", r.Power, target.GetHealth())
+		r.Message = fmt.Sprintf("You hit monster for %d damage using basic attack, monster has %d HP left \r\n", r.Power, target.GetHealth())
 	}
 
 	s.startCoolDown(0.5)
+
+	return r
+}
+
+// HeavyAttackSkill
+type HeavyAttackSkill struct {
+	Skill
+}
+
+// NewHeavyAttackSkill creates heavy attack skill.
+func NewHeavyAttackSkill(h *Hero) *HeavyAttackSkill {
+	return &HeavyAttackSkill{Skill{
+		Name:     "Heavy Attack",
+		CoolDown: 0,
+		Type:     Offensive,
+		Hero:     h,
+	}}
+}
+
+// Cast uses a skill and starts its cool down
+func (s *HeavyAttackSkill) Cast(target Killable) Result {
+	var r Result
+	if s.CoolDown > 0 {
+		r.Message = "Cannot use skill, still recharging."
+		return r
+	}
+
+	reqMana := 15 - s.Hero.level.Number
+	if s.Hero.mana <= 0 || reqMana > s.Hero.mana {
+		r.Message = "Mana is too low."
+		return r
+	}
+
+	r.Power = common.RandomMinNumber(s.Hero.Entity.AttackPower()-5, s.Hero.Entity.AttackPower())
+	r.Power += int(float64(r.Power) * 1.2)
+	if target != nil {
+		target.ReduceHealth(r.Power)
+		r.Message = fmt.Sprintf("You hit monster for %d damage using heavy attack, monster has %d HP left \r\n", r.Power, target.GetHealth())
+	}
+
+	s.Hero.mana -= reqMana
+	s.startCoolDown(10)
 
 	return r
 }

@@ -29,8 +29,6 @@ const (
 	MoveLeft = "a"
 	//MoveRight key
 	MoveRight = "d"
-	//AttackPower key
-	Attack = "1"
 	//Heal key
 	Heal = "2"
 )
@@ -122,7 +120,7 @@ func (g *Game) UpdateView() {
 }
 
 func isSkillAction(action string) bool {
-	skill := []string{Attack, Heal}
+	skill := []string{"1", "3", Heal}
 	return common.SliceContains(skill, action)
 }
 

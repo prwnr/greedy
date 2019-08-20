@@ -122,13 +122,15 @@ func TestHeroAttackSkill(t *testing.T) {
 
 	tests := []struct {
 		name         string
+		skill        string
 		wantMessage  string
 		wantMinPower int
 		wantMaxPower int
 		target       Killable
 	}{
-		{"hero attacks monster",
-			"You hit monster for \\d* damage, monster has \\d* HP left \r\n",
+		{"hero basic attack",
+			"1",
+			"You hit monster for \\d* damage using basic attack, monster has \\d* HP left \r\n",
 			10,
 			15,
 			&entity.Entity{
@@ -136,7 +138,18 @@ func TestHeroAttackSkill(t *testing.T) {
 				Attack: 1,
 			},
 		},
+		{"hero heavy attack",
+			"3",
+			"You hit monster for \\d* damage using heavy attack, monster has \\d* HP left \r\n",
+			22,
+			33,
+			&entity.Entity{
+				Health: 100,
+				Attack: 1,
+			},
+		},
 		{"hero cant attack nil target",
+			"1",
 			"",
 			10,
 			15,
@@ -146,10 +159,9 @@ func TestHeroAttackSkill(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			h := NewHero(0, 0)
-			s := NewBasicAttackSkill(h)
 
 			go assertRechargeChannelReceived(t)
-			got := s.Cast(tt.target)
+			got := h.UseSkill(tt.skill, tt.target)
 			if got.Power < tt.wantMinPower || got.Power > tt.wantMaxPower {
 				t.Errorf("Cast() power = %v, want power between %v, %v", got.Power, tt.wantMinPower, tt.wantMaxPower)
 			}
