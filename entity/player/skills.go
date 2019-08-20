@@ -34,7 +34,7 @@ func (s *Skill) startCoolDown(cd float64) {
 	RechargeSkill <- true
 	go func() {
 		ticker := time.NewTicker(time.Millisecond * 500)
-		for _ = range ticker.C {
+		for range ticker.C {
 			s.CoolDown -= 0.5
 			RechargeSkill <- true
 			if s.CoolDown <= 0 {

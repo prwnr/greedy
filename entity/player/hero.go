@@ -124,11 +124,11 @@ func (h *Hero) GetStats() [][]string {
 	}
 
 	return [][]string{
-		[]string{"Level", fmt.Sprintf("%d", h.level.Number)},
-		[]string{"Health", fmt.Sprintf("%d/%d", h.Entity.Health, h.maxHealth)},
-		[]string{"Mana", fmt.Sprintf("%d/%d", h.mana, h.maxMana)},
-		[]string{"Attack", fmt.Sprintf("%d", h.Entity.Attack)},
-		[]string{"Experience", fmt.Sprintf("%d/%d", h.experience, reqExp)},
+		{"Level", fmt.Sprintf("%d", h.level.Number)},
+		{"Health", fmt.Sprintf("%d/%d", h.Entity.Health, h.maxHealth)},
+		{"Mana", fmt.Sprintf("%d/%d", h.mana, h.maxMana)},
+		{"Attack", fmt.Sprintf("%d", h.Entity.Attack)},
+		{"Experience", fmt.Sprintf("%d/%d", h.experience, reqExp)},
 	}
 }
 

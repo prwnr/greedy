@@ -18,7 +18,7 @@ func NewLocation(size int) *Location {
 	l := &Location{Size: size}
 	l.build()
 
-	monsters := int(size / 2)
+	monsters := size / 2
 	l.PlaceMonsters(monsters)
 
 	return l

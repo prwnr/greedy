@@ -50,8 +50,8 @@ func (m Monster) Render() string {
 // GetStats returns current hero statistics
 func (m *Monster) GetStats() [][]string {
 	return [][]string{
-		[]string{"Level", fmt.Sprintf("%d", m.level.Number)},
-		[]string{"Health", fmt.Sprintf("%d/%d", m.GetHealth(), m.maxHealth)},
-		[]string{"Attack", fmt.Sprintf("%d", m.AttackPower())},
+		{"Level", fmt.Sprintf("%d", m.level.Number)},
+		{"Health", fmt.Sprintf("%d/%d", m.GetHealth(), m.maxHealth)},
+		{"Attack", fmt.Sprintf("%d", m.AttackPower())},
 	}
 }

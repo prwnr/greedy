@@ -29,17 +29,17 @@ func NewView() *View {
 
 	view.Hero = widgets.NewTable()
 	view.Hero.Title = "My hero"
-	view.Hero.Rows = [][]string{[]string{""}}
+	view.Hero.Rows = [][]string{{""}}
 	view.Hero.SetRect(40, 0, 65, 11)
 
 	view.SkillsBar = widgets.NewTable()
 	view.SkillsBar.Title = "Skill bar"
-	view.SkillsBar.Rows = [][]string{[]string{""}}
+	view.SkillsBar.Rows = [][]string{{""}}
 	view.SkillsBar.SetRect(0, 20, 65, 25)
 
 	view.Monster = widgets.NewTable()
 	view.Monster.Title = ""
-	view.Monster.Rows = [][]string{[]string{""}}
+	view.Monster.Rows = [][]string{{""}}
 	view.Monster.SetRect(40, 11, 65, 20)
 
 	return &view
@@ -74,7 +74,7 @@ func (v *View) ShowMonster(stats [][]string) {
 // HideMonster removes monster from view
 func (v *View) HideMonster() {
 	v.Monster.Title = ""
-	v.Monster.Rows = [][]string{[]string{""}}
+	v.Monster.Rows = [][]string{{""}}
 }
 
 // All return all available view parts

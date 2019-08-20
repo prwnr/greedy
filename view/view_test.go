@@ -24,7 +24,7 @@ func TestViewsUpdate(t *testing.T) {
 		v := NewView()
 
 		want := [][]string{
-			[]string{"Foo"},
+			{"Foo"},
 		}
 		v.UpdateHeroStats(want)
 
@@ -35,10 +35,9 @@ func TestViewsUpdate(t *testing.T) {
 		v := NewView()
 
 		want := [][]string{
-			[]string{"Foo"},
+			{"Foo"},
 		}
 		v.ShowMonster(want)
-
 
 		assertStringEquals(t, "Monster", v.Monster.Title)
 		assertSlicesEqual(t, want, v.Monster.Rows)
@@ -48,7 +47,7 @@ func TestViewsUpdate(t *testing.T) {
 		v := NewView()
 
 		want := [][]string{
-			[]string{"Foo"},
+			{"Foo"},
 		}
 		v.ShowMonster(want)
 
@@ -56,7 +55,7 @@ func TestViewsUpdate(t *testing.T) {
 		assertSlicesEqual(t, want, v.Monster.Rows)
 
 		v.HideMonster()
-		want = [][]string{[]string{""}}
+		want = [][]string{{""}}
 		assertStringEquals(t, "", v.Monster.Title)
 		assertSlicesEqual(t, want, v.Monster.Rows)
 	})

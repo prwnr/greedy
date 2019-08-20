@@ -115,11 +115,6 @@ func TestHeroHealingSkill(t *testing.T) {
 }
 
 func TestHeroAttackSkill(t *testing.T) {
-	type args struct {
-		heroHealth int
-		heroMana   int
-	}
-
 	tests := []struct {
 		name         string
 		skill        string
