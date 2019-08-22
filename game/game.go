@@ -41,9 +41,10 @@ func NewGame() Game {
 
 	g.View = view.NewView()
 	g.Hero = player.NewHero(0, g.Config.LocationSize-1)
-	g.CurrentLocation = world.NewLocation(g.Config.LocationSize)
+	g.CurrentLocation = world.NewLocation(g.Config.LocationSize, 1)
 
 	g.CurrentLocation.PlaceHero(g.Hero)
+	g.View.UpdateLocationTitle(g.CurrentLocation.Level())
 	g.View.UpdateLocation(g.CurrentLocation.RenderPlaces())
 
 	g.View.UpdateHeroStats(g.Hero.GetStats())

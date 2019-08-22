@@ -1,6 +1,7 @@
 package view
 
 import (
+	"fmt"
 	"github.com/gizak/termui/v3/widgets"
 
 	ui "github.com/gizak/termui/v3"
@@ -48,6 +49,11 @@ func NewView() *View {
 // UpdateLocation view change
 func (v *View) UpdateLocation(text string) {
 	v.Location.Text = text
+}
+
+// UpdateLocationTitle view change
+func (v *View) UpdateLocationTitle(level int) {
+	v.Location.Title = "Location level " + fmt.Sprintf("%d", level)
 }
 
 // UpdateCombatLog view change

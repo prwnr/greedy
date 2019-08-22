@@ -11,11 +11,17 @@ import (
 type Location struct {
 	Size   int
 	Places [][]Place
+	level  int
+}
+
+// Level of the location
+func (l *Location) Level() int {
+	return l.level
 }
 
 //NewLocation creates new game Map with places
-func NewLocation(size int) *Location {
-	l := &Location{Size: size}
+func NewLocation(size, level int) *Location {
+	l := &Location{Size: size, level: level}
 	l.build()
 
 	monsters := size / 2
@@ -93,7 +99,13 @@ func placeMonster(l *Location) bool {
 		return placeMonster(l)
 	}
 
-	place.AddMonster(npc.NewMonster(common.RandomMinNumber(1, 3)))
+	level := common.RandomMinNumber(l.level+0, l.level+2)
+	m := npc.NewMonster(level)
+	if l.level > 1 {
+		m.SetLook(npc.LevelLook[level-l.level+1])
+	}
+
+	place.AddMonster(m)
 
 	return true
 }

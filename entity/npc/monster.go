@@ -37,9 +37,19 @@ func NewMonster(level int) *Monster {
 	return m
 }
 
+// SetLook for monster
+func (m *Monster) SetLook(look string) {
+	m.look = look
+}
+
+// Level of the monster
+func (m *Monster) Level() int {
+	return m.level.Number
+}
+
 // GetExperienceValue returns how much experience monster is worth.
 func (m *Monster) GetExperienceValue() int {
-	return BaseExperience * m.level.Number
+	return BaseExperience * m.Level()
 }
 
 // Render monster look

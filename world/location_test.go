@@ -6,7 +6,7 @@ import (
 )
 
 func TestLocationCreation(t *testing.T) {
-	l := NewLocation(5) // created 2 two monsters
+	l := NewLocation(5, 1) // created 2 two monsters
 
 	assertHasFreeSpots(t, l)
 	assertCount(t, len(l.Places), 5)
@@ -15,7 +15,7 @@ func TestLocationCreation(t *testing.T) {
 
 func TestLocationRender(t *testing.T) {
 	t.Run("render empty location", func(t *testing.T) {
-		l := NewLocation(1)
+		l := NewLocation(1, 1)
 
 		got := l.RenderPlaces()
 		want := "_\r\n"
@@ -25,7 +25,7 @@ func TestLocationRender(t *testing.T) {
 	})
 
 	t.Run("render location with hero", func(t *testing.T) {
-		l := NewLocation(1)
+		l := NewLocation(1, 1)
 		h := player.NewHero(0, 0)
 		l.PlaceHero(h)
 
@@ -39,7 +39,7 @@ func TestLocationRender(t *testing.T) {
 
 func TestPlacingMonsters(t *testing.T) {
 	t.Run("placing few monsters on location", func(t *testing.T) {
-		l := NewLocation(5) // created with 2 monsters
+		l := NewLocation(5, 1) // created with 2 monsters
 
 		assertHasFreeSpots(t, l)
 		assertCount(t, len(l.Places), 5)
@@ -50,7 +50,7 @@ func TestPlacingMonsters(t *testing.T) {
 	})
 
 	t.Run("placing maximum number of monsters", func(t *testing.T) {
-		l := NewLocation(2) // created with 1 monster, 3 spots left
+		l := NewLocation(2, 1) // created with 1 monster, 3 spots left
 
 		assertHasFreeSpots(t, l)
 		assertCount(t, len(l.Places), 2)
@@ -61,7 +61,7 @@ func TestPlacingMonsters(t *testing.T) {
 	})
 
 	t.Run("placing more monster that location can contain wont work", func(t *testing.T) {
-		l := NewLocation(2) // created with 1 monster, 3 spots left
+		l := NewLocation(2, 1) // created with 1 monster, 3 spots left
 
 		assertHasFreeSpots(t, l)
 		assertCount(t, len(l.Places), 2)
@@ -72,7 +72,7 @@ func TestPlacingMonsters(t *testing.T) {
 	})
 
 	t.Run("placing new monster after removing one", func(t *testing.T) {
-		l := NewLocation(2) // created with 1 monster, 3 spots left
+		l := NewLocation(2, 1) // created with 1 monster, 3 spots left
 
 		assertHasFreeSpots(t, l)
 		assertCount(t, len(l.Places), 2)
@@ -89,6 +89,25 @@ func TestPlacingMonsters(t *testing.T) {
 			assertNotHasFreeSpots(t, l)
 		}
 	})
+
+	t.Run("location monsters are scaling with location level", func(t *testing.T) {
+		assertBetween := func(t *testing.T, min, max, got int) {
+			if got < min || got > max {
+				t.Errorf("want level between %d and %d, got %d", min, max, got)
+			}
+		}
+
+		var l *Location
+
+		l = NewLocation(1, 1)
+		l.PlaceMonsters(1)
+		monster := l.Places[0][0].GetMonster()
+		assertBetween(t, 1, 3, monster.Level())
+
+		l = NewLocation(1, 3)
+		l.PlaceMonsters(1)
+		assertBetween(t, 3, 5, l.Places[0][0].GetMonster().Level())
+	})
 }
 
 func TestLocationWithHero(t *testing.T) {
@@ -99,7 +118,7 @@ func TestLocationWithHero(t *testing.T) {
 	}
 
 	t.Run("placing a hero on location", func(t *testing.T) {
-		l := NewLocation(2) // created with 1 monster, 3 spots left
+		l := NewLocation(2, 1) // created with 1 monster, 3 spots left
 		h := player.NewHero(0, 1)
 
 		l.PlaceHero(h)
@@ -109,7 +128,7 @@ func TestLocationWithHero(t *testing.T) {
 	})
 
 	t.Run("changing hero place", func(t *testing.T) {
-		l := NewLocation(2) // created with 1 monster, 3 spots left
+		l := NewLocation(2, 1) // created with 1 monster, 3 spots left
 		h := player.NewHero(0, 1)
 
 		l.PlaceHero(h)

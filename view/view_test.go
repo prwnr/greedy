@@ -20,6 +20,13 @@ func TestViewsUpdate(t *testing.T) {
 		assertStringEquals(t, "new location", v.Location.Text)
 	})
 
+	t.Run("test location title update", func(t *testing.T) {
+		v := NewView()
+
+		v.UpdateLocationTitle(2)
+		assertStringEquals(t, "Location level 2", v.Location.Title)
+	})
+
 	t.Run("test hero stats update", func(t *testing.T) {
 		v := NewView()
 
