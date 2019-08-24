@@ -3,6 +3,7 @@ package game
 import (
 	"fmt"
 	"swarm/common"
+	"swarm/entity/npc"
 	"swarm/entity/player"
 	"swarm/view"
 	"swarm/world"
@@ -16,8 +17,12 @@ type Game struct {
 	Hero *player.Hero
 	//CurrentLocation is a location/map on which Hero is walking
 	CurrentLocation *world.Location
+	KillsCount      int
+	TimeElapsed     int
 	//Config for the game
 	Config Config
+	//Over defines if hero is defeated or time ran our
+	Over bool
 }
 
 const (
@@ -47,6 +52,9 @@ func NewGame() Game {
 	g.View.UpdateLocationTitle(g.CurrentLocation.Level())
 	g.View.UpdateLocation(g.CurrentLocation.RenderPlaces())
 
+	locReq := g.CurrentLocation.Requirements
+	g.View.UpdateGoal(locReq.MonsterTarget, locReq.KillsCount, locReq.TimeFrame)
+
 	g.View.UpdateHeroStats(g.Hero.GetStats())
 	g.View.UpdateSkillBar(g.Hero.Skills())
 
@@ -66,14 +74,23 @@ func (g *Game) PlayerAction(action string) {
 			res, err := fight(hero, monster, action)
 			if err != nil {
 				_ = fmt.Errorf("fight error: %v", err)
-			} else {
-				if !monster.IsAlive() {
-					currPlace.RemoveMonster()
-					if hero.IsAlive() {
-						res += hero.GainExperience(monster.GetExperienceValue())
-					}
+				return
+			}
+
+			if !monster.IsAlive() {
+				g.countKill(monster)
+
+				currPlace.RemoveMonster()
+				if hero.IsAlive() {
+					res += hero.GainExperience(monster.GetExperienceValue())
 				}
-				g.View.UpdateCombatLog(res)
+			}
+
+			g.View.UpdateCombatLog(res)
+			if !g.Hero.IsAlive() {
+				g.View.UpdateCombatLog("Hero died. Press 'q' to quit or 'r' to restart.")
+				g.Over = true
+				return
 			}
 		} else {
 			if action == Heal {
@@ -128,4 +145,19 @@ func isSkillAction(action string) bool {
 func isMovement(action string) bool {
 	move := []string{MoveUp, MoveRight, MoveLeft, MoveDown}
 	return common.SliceContains(move, action)
+}
+
+func (g *Game) countKill(m *npc.Monster) {
+	if m.Render() == g.CurrentLocation.Requirements.MonsterTarget {
+		g.KillsCount++
+
+		g.UpdateGoal()
+	}
+}
+
+// UpdateGoal triggers view update on location goal
+func (g *Game) UpdateGoal() {
+	t := g.CurrentLocation.Requirements.TimeFrame - g.TimeElapsed
+	k := g.CurrentLocation.Requirements.KillsCount - g.KillsCount
+	g.View.UpdateGoal(g.CurrentLocation.Requirements.MonsterTarget, k, t)
 }

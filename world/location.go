@@ -9,9 +9,10 @@ import (
 
 //Location of the game
 type Location struct {
-	Size   int
-	Places [][]Place
-	level  int
+	Size         int
+	Places       [][]Place
+	level        int
+	Requirements LevelRequirements
 }
 
 // Level of the location
@@ -21,7 +22,18 @@ func (l *Location) Level() int {
 
 //NewLocation creates new game Map with places
 func NewLocation(size, level int) *Location {
-	l := &Location{Size: size, level: level}
+	req := LevelRequirements{
+		TimeFrame:     120,
+		MonsterTarget: "@",
+		KillsCount:    3,
+	}
+
+	l := &Location{
+		Size:         size,
+		level:        level,
+		Requirements: req,
+	}
+
 	l.build()
 
 	monsters := size / 2
@@ -119,4 +131,10 @@ func (l *Location) build() {
 		}
 		l.Places = append(l.Places, tmp)
 	}
+}
+
+type LevelRequirements struct {
+	TimeFrame     int
+	MonsterTarget string
+	KillsCount    int
 }

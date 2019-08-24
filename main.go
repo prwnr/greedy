@@ -18,7 +18,6 @@ func main() {
 	g := game.NewGame()
 	ui.Render(g.View.All()...)
 
-	gameOver := false
 	uiEvents := ui.PollEvents()
 
 	end := make(chan bool)
@@ -37,7 +36,7 @@ func main() {
 	tick := time.NewTicker(time.Second * 1).C
 	second := int64(0)
 	for {
-		if gameOver {
+		if g.Over {
 			e := <-uiEvents
 			if e.ID == "q" || e.ID == "<C-c>" {
 				end <- true
@@ -47,7 +46,7 @@ func main() {
 			if e.ID == "r" {
 				g = game.NewGame()
 				ui.Render(g.View.All()...)
-				gameOver = false
+				g.Over = false
 			}
 
 			continue
@@ -61,13 +60,12 @@ func main() {
 				return
 			default:
 				g.PlayerAction(e.ID)
-				if !g.Hero.IsAlive() {
-					g.View.UpdateCombatLog("Hero died. Press 'q' to quit or 'r' to restart.")
-					gameOver = true
-				}
 			}
 		case <-tick:
 			second++
+			g.TimeElapsed++
+			g.UpdateGoal()
+
 			if second%g.Config.MonsterSpawn == 0 {
 				go g.CurrentLocation.PlaceMonsters(g.Config.MonstersSpawnNum)
 			}
