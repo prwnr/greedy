@@ -7,12 +7,18 @@ import (
 	"swarm/entity/player"
 )
 
+const (
+	BaseTimeFrame  = 160
+	MonsterTarget  = "@"
+	BaseKillsCount = 2
+)
+
 //Location of the game
 type Location struct {
 	Size         int
 	Places       [][]Place
 	level        int
-	Requirements LevelRequirements
+	Requirements levelRequirements
 }
 
 // Level of the location
@@ -22,10 +28,10 @@ func (l *Location) Level() int {
 
 //NewLocation creates new game Map with places
 func NewLocation(size, level int) *Location {
-	req := LevelRequirements{
-		TimeFrame:     120,
-		MonsterTarget: "@",
-		KillsCount:    3,
+	req := levelRequirements{
+		TimeFrame:     BaseTimeFrame * int(float64(level)*1.5),
+		MonsterTarget: MonsterTarget,
+		KillsCount:    BaseKillsCount * level,
 	}
 
 	l := &Location{
@@ -133,7 +139,7 @@ func (l *Location) build() {
 	}
 }
 
-type LevelRequirements struct {
+type levelRequirements struct {
 	TimeFrame     int
 	MonsterTarget string
 	KillsCount    int

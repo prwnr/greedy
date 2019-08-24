@@ -63,16 +63,7 @@ func main() {
 			}
 		case <-tick:
 			second++
-			g.TimeElapsed++
-			g.UpdateGoal()
-
-			if second%g.Config.MonsterSpawn == 0 {
-				go g.CurrentLocation.PlaceMonsters(g.Config.MonstersSpawnNum)
-			}
-
-			if second%player.RegenTimeout == 0 {
-				go g.Hero.Regenerate()
-			}
+			g.Cycle(second)
 		}
 
 		g.UpdateView()

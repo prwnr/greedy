@@ -7,6 +7,7 @@ import (
 	"swarm/entity/player"
 	"swarm/view"
 	"swarm/world"
+	"time"
 )
 
 // Game struct
@@ -22,7 +23,8 @@ type Game struct {
 	//Config for the game
 	Config Config
 	//Over defines if hero is defeated or time ran our
-	Over bool
+	Over          bool
+	swarmReleased bool
 }
 
 const (
@@ -61,6 +63,31 @@ func NewGame() Game {
 	return g
 }
 
+// Cycle in game
+func (g *Game) Cycle(second int64) {
+	if g.CurrentLocation.Requirements.KillsCount == g.KillsCount && !g.TimeIsOver() {
+		g.NextLocation()
+	}
+
+	if !g.TimeIsOver() {
+		g.TimeElapsed++
+		g.UpdateGoal()
+	}
+
+	if g.TimeIsOver() && !g.swarmReleased {
+		go g.ReleaseSwarm()
+		g.swarmReleased = true
+	}
+
+	if second%g.Config.MonsterSpawn == 0 {
+		go g.CurrentLocation.PlaceMonsters(g.Config.MonstersSpawnNum)
+	}
+
+	if second%player.RegenTimeout == 0 {
+		go g.Hero.Regenerate()
+	}
+}
+
 // PlayerAction changes hero position
 func (g *Game) PlayerAction(action string) {
 	currPlace := g.CurrentLocation.GetHeroPlace(g.Hero)
@@ -87,17 +114,14 @@ func (g *Game) PlayerAction(action string) {
 			}
 
 			g.View.UpdateCombatLog(res)
-			if !g.Hero.IsAlive() {
-				g.View.UpdateCombatLog("Hero died. Press 'q' to quit or 'r' to restart.")
-				g.Over = true
-				return
-			}
 		} else {
 			if action == Heal {
 				res := g.Hero.UseSkill(Heal, nil)
 				g.View.UpdateCombatLog(res.Message)
 			}
 		}
+
+		g.CheckHeroStatus()
 
 		return
 	}
@@ -119,6 +143,8 @@ func (g *Game) PlayerAction(action string) {
 			g.View.UpdateCombatLog(res)
 		}
 	}
+
+	g.CheckHeroStatus()
 
 	currPlace.RemoveHero()
 	g.CurrentLocation.PlaceHero(g.Hero)
@@ -160,4 +186,40 @@ func (g *Game) UpdateGoal() {
 	t := g.CurrentLocation.Requirements.TimeFrame - g.TimeElapsed
 	k := g.CurrentLocation.Requirements.KillsCount - g.KillsCount
 	g.View.UpdateGoal(g.CurrentLocation.Requirements.MonsterTarget, k, t)
+}
+
+// TimeIsOver checks if location time passed
+func (g *Game) TimeIsOver() bool {
+	return g.CurrentLocation.Requirements.TimeFrame-g.TimeElapsed <= 0
+}
+
+// CheckHeroStatus if its alive. If not, game is over
+func (g *Game) CheckHeroStatus() {
+	if !g.Hero.IsAlive() {
+		g.View.UpdateCombatLog("Hero died. Press 'q' to quit or 'r' to restart.")
+		g.Over = true
+	}
+}
+
+// ReleaseSwarm monsters
+func (g *Game) ReleaseSwarm() {
+	t := time.NewTicker(time.Second * 1)
+	for {
+		select {
+		case <-t.C:
+			g.CurrentLocation.PlaceMonsters(10)
+			if !g.CurrentLocation.HasFreePlace() {
+				t.Stop()
+				return
+			}
+		}
+	}
+}
+
+// NextLocation advance
+func (g *Game) NextLocation() {
+	g.CurrentLocation = world.NewLocation(g.Config.LocationSize, g.CurrentLocation.Level()+1)
+	g.View.UpdateLocationTitle(g.CurrentLocation.Level())
+	g.KillsCount = 0
+	g.TimeElapsed = 0
 }
