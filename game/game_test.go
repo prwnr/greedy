@@ -1,6 +1,7 @@
 package game
 
 import (
+	"swarm/world"
 	"testing"
 )
 
@@ -45,5 +46,15 @@ func TestWontMoveHeroOutsideLocation(t *testing.T) {
 	g.PlayerAction(MoveLeft)
 	if g.Hero.Position.X != 0 {
 		t.Errorf("hero X position should be 0, was %d", g.Hero.Position.X)
+	}
+}
+
+func TestReleasingSwarm(t *testing.T) {
+	g := NewGame()
+	g.CurrentLocation = world.NewLocation(2, 1)
+
+	g.ReleaseSwarm()
+	if g.CurrentLocation.HasFreePlace() {
+		t.Errorf("current location should be full of monsters")
 	}
 }

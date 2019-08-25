@@ -66,6 +66,13 @@ func TestViewsUpdate(t *testing.T) {
 		assertStringEquals(t, "", v.Monster.Title)
 		assertSlicesEqual(t, want, v.Monster.Rows)
 	})
+
+	t.Run("test goal update", func(t *testing.T) {
+		v := NewView()
+
+		v.UpdateGoal("@", 2, 10)
+		assertStringEquals(t, "Kill 2 [@] monsters in 10 seconds", v.Location.Text)
+	})
 }
 
 func assertStringEquals(t *testing.T, want, got string) {

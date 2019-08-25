@@ -222,4 +222,5 @@ func (g *Game) NextLocation() {
 	g.View.UpdateLocationTitle(g.CurrentLocation.Level())
 	g.KillsCount = 0
 	g.TimeElapsed = 0
+	g.CurrentLocation.PlaceHero(g.Hero)
 }

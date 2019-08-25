@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	MaxLevel = 5
+	MaxLevel = 10
 	//Base attributes of the hero
 	BaseHealth = 150
 	BaseMana   = 60
