@@ -90,8 +90,6 @@ func (g *Game) Cycle(second int64) {
 	if second%player.RegenTimeout == 0 {
 		go g.Hero.Regenerate()
 	}
-
-	g.UpdateView()
 }
 
 // PlayerAction changes hero position
@@ -128,7 +126,6 @@ func (g *Game) PlayerAction(action string) {
 		}
 
 		g.CheckHeroStatus()
-		g.UpdateView()
 
 		return
 	}
@@ -155,7 +152,6 @@ func (g *Game) PlayerAction(action string) {
 
 	currPlace.RemoveHero()
 	g.CurrentLocation.PlaceHero(g.Hero)
-	g.UpdateView()
 }
 
 // UpdateView updates main views of the game
@@ -216,6 +212,7 @@ func (g *Game) ReleaseSwarm() {
 		select {
 		case <-t.C:
 			g.CurrentLocation.PlaceMonsters(1)
+			g.View.UpdateLocation(g.CurrentLocation.RenderPlaces())
 			if !g.CurrentLocation.HasFreePlace() {
 				t.Stop()
 				return

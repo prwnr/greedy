@@ -62,10 +62,12 @@ func main() {
 				return
 			default:
 				g.PlayerAction(e.ID)
+				g.UpdateView()
 			}
 		case <-tick:
 			second++
 			g.Cycle(second)
+			g.UpdateView()
 		}
 	}
 }
