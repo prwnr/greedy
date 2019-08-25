@@ -4,6 +4,7 @@ import (
 	"log"
 	"swarm/entity/player"
 	"swarm/game"
+	"swarm/view"
 	"time"
 
 	ui "github.com/gizak/termui/v3"
@@ -16,14 +17,13 @@ func main() {
 	defer ui.Close()
 
 	g := game.NewGame()
-	ui.Render(g.View.All()...)
-
-	uiEvents := ui.PollEvents()
 
 	end := make(chan bool)
 	go func() {
 		for {
 			select {
+			case <-view.UIChange:
+				ui.Render(g.View.All()...)
 			case <-player.RechargeSkill:
 				g.View.UpdateSkillBar(g.Hero.Skills())
 				ui.Render(g.View.SkillsBar)
@@ -32,6 +32,9 @@ func main() {
 			}
 		}
 	}()
+
+	g.InitViews()
+	uiEvents := ui.PollEvents()
 
 	tick := time.NewTicker(time.Second * 1).C
 	second := int64(0)
@@ -45,7 +48,6 @@ func main() {
 
 			if e.ID == "r" {
 				g = game.NewGame()
-				ui.Render(g.View.All()...)
 				g.Over = false
 			}
 
@@ -65,8 +67,5 @@ func main() {
 			second++
 			g.Cycle(second)
 		}
-
-		g.UpdateView()
-		ui.Render(g.View.All()...)
 	}
 }

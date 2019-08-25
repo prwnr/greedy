@@ -51,6 +51,12 @@ func NewGame() Game {
 	g.CurrentLocation = world.NewLocation(g.Config.LocationSize, 1)
 
 	g.CurrentLocation.PlaceHero(g.Hero)
+
+	return g
+}
+
+// InitViews sets up first UI data.
+func (g *Game) InitViews() {
 	g.View.UpdateLocationTitle(g.CurrentLocation.Level())
 	g.View.UpdateLocation(g.CurrentLocation.RenderPlaces())
 
@@ -59,8 +65,6 @@ func NewGame() Game {
 
 	g.View.UpdateHeroStats(g.Hero.GetStats())
 	g.View.UpdateSkillBar(g.Hero.Skills())
-
-	return g
 }
 
 // Cycle in game
@@ -86,6 +90,8 @@ func (g *Game) Cycle(second int64) {
 	if second%player.RegenTimeout == 0 {
 		go g.Hero.Regenerate()
 	}
+
+	g.UpdateView()
 }
 
 // PlayerAction changes hero position
@@ -122,6 +128,7 @@ func (g *Game) PlayerAction(action string) {
 		}
 
 		g.CheckHeroStatus()
+		g.UpdateView()
 
 		return
 	}
@@ -148,6 +155,7 @@ func (g *Game) PlayerAction(action string) {
 
 	currPlace.RemoveHero()
 	g.CurrentLocation.PlaceHero(g.Hero)
+	g.UpdateView()
 }
 
 // UpdateView updates main views of the game
@@ -203,11 +211,11 @@ func (g *Game) CheckHeroStatus() {
 
 // ReleaseSwarm monsters
 func (g *Game) ReleaseSwarm() {
-	t := time.NewTicker(time.Second * 1)
+	t := time.NewTicker(time.Millisecond * 20)
 	for {
 		select {
 		case <-t.C:
-			g.CurrentLocation.PlaceMonsters(10)
+			g.CurrentLocation.PlaceMonsters(1)
 			if !g.CurrentLocation.HasFreePlace() {
 				t.Stop()
 				return
