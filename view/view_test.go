@@ -6,6 +6,8 @@ import (
 )
 
 func TestViewsUpdate(t *testing.T) {
+	go assertViewChannelReceived(t)
+
 	t.Run("test combat log update", func(t *testing.T) {
 		v := NewView()
 
@@ -71,7 +73,7 @@ func TestViewsUpdate(t *testing.T) {
 		v := NewView()
 
 		v.UpdateGoal("@", 2, 10)
-		assertStringEquals(t, "Kill 2 [@] monsters in 10 seconds", v.Location.Text)
+		assertStringEquals(t, "Kill 2 [@] monsters in 10 seconds", v.Goal.Text)
 	})
 }
 
@@ -84,5 +86,14 @@ func assertStringEquals(t *testing.T, want, got string) {
 func assertSlicesEqual(t *testing.T, want, got [][]string) {
 	if !reflect.DeepEqual(want, got) {
 		t.Errorf("wanted stats on vie %v, but got %v", want, got)
+	}
+}
+
+func assertViewChannelReceived(t *testing.T) {
+	for {
+		res := <-UIChange
+		if res != true {
+			t.Errorf("UIChange channel is not true")
+		}
 	}
 }
