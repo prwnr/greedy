@@ -9,17 +9,18 @@ import (
 
 func TestSkillStartCoolDown(t *testing.T) {
 	s := &Skill{
-		Name:     "Foo",
-		CoolDown: 0,
+		Name:       "Foo",
+		internalCD: 0,
+		CoolDown:   0.5,
 	}
 
 	go assertRechargeChannelReceived(t)
-	s.startCoolDown(0.5)
+	s.startCoolDown()
 
-	assertNumberEquals(t, 0.5, s.CoolDown)
+	assertNumberEquals(t, 0.5, s.internalCD)
 
 	time.Sleep(time.Millisecond * 600)
-	assertNumberEquals(t, 0, s.CoolDown)
+	assertNumberEquals(t, 0, s.internalCD)
 }
 
 func TestSkillCurrentCoolDown(t *testing.T) {
@@ -38,8 +39,8 @@ func TestSkillCurrentCoolDown(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			s := &Skill{
-				Name:     tt.fields.Name,
-				CoolDown: tt.fields.CoolDown,
+				Name:       tt.fields.Name,
+				internalCD: tt.fields.CoolDown,
 			}
 			go assertRechargeChannelReceived(t)
 			if got := s.CurrentCoolDown(); got != tt.want {
@@ -65,8 +66,8 @@ func TestSkillGetName(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			s := &Skill{
-				Name:     tt.fields.Name,
-				CoolDown: tt.fields.CoolDown,
+				Name:       tt.fields.Name,
+				internalCD: tt.fields.CoolDown,
 			}
 			if got := s.GetName(); got != tt.want {
 				t.Errorf("GetName() = %v, want %v", got, tt.want)
@@ -136,8 +137,8 @@ func TestHeroAttackSkill(t *testing.T) {
 		{"hero heavy attack",
 			"3",
 			"You hit monster for \\d* damage using heavy attack, monster has \\d* HP left \r\n",
-			22,
-			33,
+			24,
+			36,
 			&entity.Entity{
 				Health: 100,
 				Attack: 1,

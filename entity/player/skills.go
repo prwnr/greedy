@@ -8,36 +8,30 @@ import (
 
 // Skill structure
 type Skill struct {
-	Name     string
+	//Name of the skill displayed in UI
+	Name string
+	//CoolDown defined skill CD
 	CoolDown float64
-	Type     SkillType
-	Hero     *Hero
-	Update   chan bool
+	//internalCD as current cool down after skill use
+	internalCD float64
+	//Hero which used the skill
+	Hero *Hero
 }
 
 // RechargeSkill channel that triggers when skill CD is started
 // and counts down
 var RechargeSkill = make(chan bool)
 
-// SkillType defines type of the skill
-type SkillType int
-
-// Skill types
-const (
-	Offensive = 1
-	Defensive = 2
-)
-
 // starts internal skill recharge cool down
-func (s *Skill) startCoolDown(cd float64) {
-	s.CoolDown = cd
+func (s *Skill) startCoolDown() {
+	s.internalCD = s.CoolDown
 	RechargeSkill <- true
 	go func() {
 		ticker := time.NewTicker(time.Millisecond * 500)
 		for range ticker.C {
-			s.CoolDown -= 0.5
+			s.internalCD -= 0.5
 			RechargeSkill <- true
-			if s.CoolDown <= 0 {
+			if s.internalCD <= 0 {
 				ticker.Stop()
 				return
 			}
@@ -52,7 +46,7 @@ func (s *Skill) GetName() string {
 
 // CurrentCoolDown returns internal recharge cool down
 func (s *Skill) CurrentCoolDown() float64 {
-	return s.CoolDown
+	return s.internalCD
 }
 
 // Castable defines skill
@@ -60,12 +54,12 @@ type Castable interface {
 	GetName() string
 	CurrentCoolDown() float64
 	Cast(target Killable) Result
+	ManaCost() int
 }
 
 // Result returns what skill did
 type Result struct {
 	Message string
-	Type    SkillType
 	Power   int
 }
 
@@ -74,12 +68,13 @@ type HealingSkill struct {
 	Skill
 }
 
+const healingSkillBaseAmount = 5
+
 // NewHealingSkill creates healing skill.
 func NewHealingSkill(h *Hero) *HealingSkill {
 	return &HealingSkill{Skill{
 		Name:     "Heal",
-		CoolDown: 0,
-		Type:     Defensive,
+		CoolDown: 4,
 		Hero:     h,
 	}}
 }
@@ -87,13 +82,12 @@ func NewHealingSkill(h *Hero) *HealingSkill {
 // Cast uses a skill and starts its cool down
 func (s *HealingSkill) Cast(target Killable) Result {
 	var r Result
-	if s.CoolDown > 0 {
+	if s.internalCD > 0 {
 		r.Message = "Cannot use skill, still recharging."
 		return r
 	}
 
-	reqMana := 11 - s.Hero.level.Number
-	if s.Hero.mana <= 0 || reqMana > s.Hero.mana {
+	if s.Hero.mana <= 0 || s.ManaCost() > s.Hero.mana {
 		r.Message = "Mana is too low."
 		return r
 	}
@@ -103,15 +97,19 @@ func (s *HealingSkill) Cast(target Killable) Result {
 		return r
 	}
 
-	healAmount := 5 * s.Hero.level.Number
+	healAmount := healingSkillBaseAmount * s.Hero.level.Number
 	s.Hero.Entity.Health += healAmount
-	s.Hero.mana -= reqMana
+	s.Hero.mana -= s.ManaCost()
 
 	r.Message = fmt.Sprintf("Hero health restored by %d.", healAmount)
 
-	r.Type = s.Type
-	s.startCoolDown(5)
+	s.startCoolDown()
 	return r
+}
+
+// ManaCost returns cost of the skill
+func (s *HealingSkill) ManaCost() int {
+	return 10 - s.Hero.level.Number
 }
 
 // BasicAttackSkill
@@ -128,8 +126,7 @@ type Killable interface {
 func NewBasicAttackSkill(h *Hero) *BasicAttackSkill {
 	return &BasicAttackSkill{Skill{
 		Name:     "Attack",
-		CoolDown: 0,
-		Type:     Offensive,
+		CoolDown: 0.5,
 		Hero:     h,
 	}}
 }
@@ -137,7 +134,7 @@ func NewBasicAttackSkill(h *Hero) *BasicAttackSkill {
 // Cast uses a skill and starts its cool down
 func (s *BasicAttackSkill) Cast(target Killable) Result {
 	var r Result
-	if s.CoolDown > 0 {
+	if s.internalCD > 0 {
 		r.Message = "Cannot use skill, still recharging."
 		return r
 	}
@@ -147,9 +144,14 @@ func (s *BasicAttackSkill) Cast(target Killable) Result {
 		r.Message = fmt.Sprintf("You hit monster for %d damage using basic attack, monster has %d HP left \r\n", r.Power, target.GetHealth())
 	}
 
-	s.startCoolDown(0.5)
+	s.startCoolDown()
 
 	return r
+}
+
+// ManaCost returns cost of the skill
+func (s *BasicAttackSkill) ManaCost() int {
+	return 0
 }
 
 // HeavyAttackSkill
@@ -157,12 +159,13 @@ type HeavyAttackSkill struct {
 	Skill
 }
 
+const heavyAttackBasePower = 1.4
+
 // NewHeavyAttackSkill creates heavy attack skill.
 func NewHeavyAttackSkill(h *Hero) *HeavyAttackSkill {
 	return &HeavyAttackSkill{Skill{
 		Name:     "Heavy Attack",
-		CoolDown: 0,
-		Type:     Offensive,
+		CoolDown: 8,
 		Hero:     h,
 	}}
 }
@@ -170,26 +173,30 @@ func NewHeavyAttackSkill(h *Hero) *HeavyAttackSkill {
 // Cast uses a skill and starts its cool down
 func (s *HeavyAttackSkill) Cast(target Killable) Result {
 	var r Result
-	if s.CoolDown > 0 {
+	if s.internalCD > 0 {
 		r.Message = "Cannot use skill, still recharging."
 		return r
 	}
 
-	reqMana := 15 - s.Hero.level.Number
-	if s.Hero.mana <= 0 || reqMana > s.Hero.mana {
+	if s.Hero.mana <= 0 || s.ManaCost() > s.Hero.mana {
 		r.Message = "Mana is too low."
 		return r
 	}
 
 	r.Power = common.RandomMinNumber(s.Hero.Entity.AttackPower()-5, s.Hero.Entity.AttackPower())
-	r.Power += int(float64(r.Power) * 1.2)
+	r.Power += int(float64(r.Power) * heavyAttackBasePower)
 	if target != nil {
 		target.ReduceHealth(r.Power)
 		r.Message = fmt.Sprintf("You hit monster for %d damage using heavy attack, monster has %d HP left \r\n", r.Power, target.GetHealth())
 	}
 
-	s.Hero.mana -= reqMana
-	s.startCoolDown(10)
+	s.Hero.mana -= s.ManaCost()
+	s.startCoolDown()
 
 	return r
+}
+
+// ManaCost returns cost of the skill
+func (s *HeavyAttackSkill) ManaCost() int {
+	return 12 - s.Hero.level.Number
 }
