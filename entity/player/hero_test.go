@@ -3,6 +3,7 @@ package player
 import (
 	"fmt"
 	"strings"
+	"swarm/modifiers"
 	"testing"
 )
 
@@ -34,7 +35,7 @@ func TestHeroFighting(t *testing.T) {
 		h := NewHero(0, 0)
 
 		got := h.GetHealth()
-		if got != BaseHealth {
+		if got != modifiers.HeroBaseHealth {
 			t.Errorf("hero should have 100 HP upon creation, has %d", got)
 		}
 	})
@@ -45,7 +46,7 @@ func TestHeroFighting(t *testing.T) {
 		h.ReduceHealth(reduce)
 
 		got := h.GetHealth()
-		if got != BaseHealth-reduce {
+		if got != modifiers.HeroBaseHealth-reduce {
 			t.Errorf("hero should have 50 HP after reducing it by 50, has %d", got)
 		}
 	})
@@ -113,14 +114,14 @@ func TestHeroLevelUp(t *testing.T) {
 		h := NewHero(0, 0)
 
 		assertHeroLevel(h, 1)
-		for i := 1; i < MaxLevel; i++ {
+		for i := 1; i < modifiers.HeroMaxLevel; i++ {
 			exp := h.level.Next.ReqExperience - h.experience
 			h.GainExperience(exp)
 			assertHeroLevel(h, i+1)
 		}
 
 		h.GainExperience(100)
-		assertHeroLevel(h, MaxLevel)
+		assertHeroLevel(h, modifiers.HeroMaxLevel)
 
 		if !h.HasMaxLevel() {
 			t.Error("Hero should be at max level")
@@ -133,8 +134,8 @@ func TestHeroRegenerate(t *testing.T) {
 	h.Entity.Health = 10
 	h.mana = 10
 
-	wantHP := h.Entity.Health + HealthRegen
-	wantMana := h.mana + ManaRegen
+	wantHP := h.Entity.Health + modifiers.HeroHealthRegen
+	wantMana := h.mana + modifiers.HeroManaRegen
 
 	h.Regenerate()
 	if h.GetHealth() != wantHP {

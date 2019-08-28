@@ -1,6 +1,7 @@
 package npc
 
 import (
+	"swarm/modifiers"
 	"testing"
 )
 
@@ -16,16 +17,18 @@ func TestMonsterFighting(t *testing.T) {
 	t.Run("monster is created with HP", func(t *testing.T) {
 		first := NewMonster(1)
 
-		firstGot := first.GetHealth()
-		if firstGot != 30 {
-			t.Errorf("monster level 1 should have 30 HP upon creation, has %d", firstGot)
+		got := first.GetHealth()
+		want := modifiers.MonsterBaseHealth
+		if got != want {
+			t.Errorf("monster level 1 should have %d HP upon creation, has %d", want, got)
 		}
 
 		second := NewMonster(2)
 
-		secondGot := second.GetHealth()
-		if secondGot != 65 {
-			t.Errorf("monster level 2 should have 60 HP upon creation, has %d", secondGot)
+		got = second.GetHealth()
+		want = modifiers.CalculateMonsterHealth(2)
+		if got != want {
+			t.Errorf("monster level 2 should have %d HP upon creation, has %d", want, got)
 		}
 	})
 
@@ -34,8 +37,9 @@ func TestMonsterFighting(t *testing.T) {
 		m.ReduceHealth(20)
 
 		got := m.GetHealth()
-		if got != 10 {
-			t.Errorf("monster should have 10 HP after reducing it by 20, has %d", got)
+		want := modifiers.MonsterBaseHealth - 20
+		if got != want {
+			t.Errorf("monster should have %d HP after reducing it by 20, has %d", want, got)
 		}
 	})
 
@@ -43,8 +47,8 @@ func TestMonsterFighting(t *testing.T) {
 		m := NewMonster(1)
 
 		got := m.AttackPower()
-		if got != 5 {
-			t.Errorf("monster level 1 attack should equal 5, got %d", got)
+		if got != modifiers.MonsterBaseAttack {
+			t.Errorf("monster level 1 attack should equal %d, got %d", modifiers.MonsterBaseAttack, got)
 		}
 	})
 
@@ -72,9 +76,9 @@ func TestMonsterGetExperienceValue(t *testing.T) {
 		level int
 		want  int
 	}{
-		{"1 lvl mob gives 15 exp", 1, BaseExperience * 1},
-		{"2 lvl mob gives 30 exp", 2, BaseExperience * 2},
-		{"5 lvl mob gives 75 exp", 5, BaseExperience * 5},
+		{"1 lvl mob gives 15 exp", 1, modifiers.MonsterBaseExperience * 1},
+		{"2 lvl mob gives 30 exp", 2, modifiers.MonsterBaseExperience * 2},
+		{"5 lvl mob gives 75 exp", 5, modifiers.MonsterBaseExperience * 5},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

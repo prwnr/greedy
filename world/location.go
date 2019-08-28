@@ -5,12 +5,7 @@ import (
 	"swarm/common"
 	"swarm/entity/npc"
 	"swarm/entity/player"
-)
-
-const (
-	BaseTimeFrame  = 160
-	MonsterTarget  = "@"
-	BaseKillsCount = 2
+	"swarm/modifiers"
 )
 
 //Location of the game
@@ -29,9 +24,9 @@ func (l *Location) Level() int {
 //NewLocation creates new game Map with places
 func NewLocation(size, level int) *Location {
 	req := levelRequirements{
-		TimeFrame:     BaseTimeFrame * int(float64(level)*1.5),
-		MonsterTarget: MonsterTarget,
-		KillsCount:    BaseKillsCount * level,
+		TimeFrame:     modifiers.LocationBaseTimeFrame * int(float64(level)*1.5),
+		MonsterTarget: modifiers.LocationMonsterTarget,
+		KillsCount:    modifiers.LocationBaseKillsCount * level,
 	}
 
 	l := &Location{

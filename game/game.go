@@ -5,6 +5,7 @@ import (
 	"swarm/common"
 	"swarm/entity/npc"
 	"swarm/entity/player"
+	"swarm/modifiers"
 	"swarm/view"
 	"swarm/world"
 	"time"
@@ -87,7 +88,7 @@ func (g *Game) Cycle(second int64) {
 		go g.CurrentLocation.PlaceMonsters(g.Config.MonstersSpawnNum)
 	}
 
-	if second%player.RegenTimeout == 0 {
+	if second%modifiers.HeroRegenTimeout == 0 {
 		go g.Hero.Regenerate()
 	}
 }

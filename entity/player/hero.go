@@ -5,18 +5,7 @@ import (
 	"sort"
 	"swarm/common"
 	"swarm/entity"
-)
-
-const (
-	MaxLevel = 10
-	//Base attributes of the hero
-	BaseHealth = 150
-	BaseMana   = 60
-	BaseAttack = 15
-	//Modifiers
-	RegenTimeout = 8
-	HealthRegen  = 4
-	ManaRegen    = 2
+	"swarm/modifiers"
 )
 
 // Hero a newborn hero
@@ -38,14 +27,14 @@ type Hero struct {
 // NewHero creates new hero struct
 func NewHero(x, y int) *Hero {
 	h := &Hero{
-		level:     NewLevel(1, MaxLevel),
-		mana:      BaseMana,
-		maxHealth: BaseHealth,
-		maxMana:   BaseMana,
+		level:     NewLevel(1, modifiers.HeroMaxLevel),
+		mana:      modifiers.HeroBaseMana,
+		maxHealth: modifiers.HeroBaseHealth,
+		maxMana:   modifiers.HeroBaseMana,
 	}
 
-	h.Entity.Health = BaseHealth
-	h.Entity.Attack = BaseAttack
+	h.Entity.Health = modifiers.HeroBaseHealth
+	h.Entity.Attack = modifiers.HeroBaseAttack
 
 	h.Position.X = x
 	h.Position.Y = y
@@ -60,7 +49,7 @@ func NewHero(x, y int) *Hero {
 
 // AttackPower returns attack amount
 func (h *Hero) AttackPower() int {
-	return common.RandomMinNumber(h.Entity.AttackPower()-5, h.Entity.AttackPower())
+	return common.RandomMinNumber(h.Entity.AttackPower()-3, h.Entity.AttackPower())
 }
 
 // UseSkill selects and casts skill
@@ -77,11 +66,11 @@ func (h *Hero) UseSkill(num string, target Killable) Result {
 // Regenerate restores Health and Mana
 func (h *Hero) Regenerate() {
 	if h.Health < h.maxHealth {
-		h.Health += HealthRegen
+		h.Health += modifiers.HeroHealthRegen
 	}
 
 	if h.mana < h.maxMana {
-		h.mana += ManaRegen
+		h.mana += modifiers.HeroManaRegen
 	}
 }
 
@@ -159,10 +148,10 @@ func (h *Hero) levelUp() {
 	}
 
 	h.level = h.level.Next
-	h.Attack = BaseAttack + h.level.Number*2
-	h.maxHealth = BaseHealth + h.level.Number*25
+	h.Attack = modifiers.CalculateHeroAttack(h.level.Number)
+	h.maxHealth = modifiers.CalculateHeroHealth(h.level.Number)
 	h.Health = h.maxHealth
-	h.maxMana = BaseMana + h.level.Number*10
+	h.maxMana = modifiers.CalculateHeroMana(h.level.Number)
 	h.mana = h.maxMana
 }
 

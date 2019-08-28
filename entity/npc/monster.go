@@ -3,12 +3,7 @@ package npc
 import (
 	"fmt"
 	"swarm/entity"
-)
-
-const (
-	BaseHealth     = 30
-	BaseAttack     = 5
-	BaseExperience = 10
+	"swarm/modifiers"
 )
 
 var LevelLook = map[int]string{1: "#", 2: "$", 3: "@"}
@@ -30,9 +25,9 @@ func NewMonster(level int) *Monster {
 		level: l,
 	}
 
-	m.maxHealth = BaseHealth*l.Number + (int(float64(l.Number-1) * 5))
+	m.maxHealth = modifiers.CalculateMonsterHealth(m.Level())
 	m.Entity.Health = m.maxHealth
-	m.Entity.Attack = BaseAttack * l.Number
+	m.Entity.Attack = modifiers.CalculateMonsterAttack(m.Level())
 
 	return m
 }
@@ -49,7 +44,7 @@ func (m *Monster) Level() int {
 
 // GetExperienceValue returns how much experience monster is worth.
 func (m *Monster) GetExperienceValue() int {
-	return BaseExperience * m.Level()
+	return modifiers.CalculateMonsterExperience(m.Level())
 }
 
 // Render monster look

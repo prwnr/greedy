@@ -1,5 +1,7 @@
 package player
 
+import "swarm/modifiers"
+
 // Level of a hero/monster
 type Level struct {
 	Number        int
@@ -19,15 +21,9 @@ func NewLevel(number, max int) *Level {
 
 	level := &Level{
 		Number:        number,
-		ReqExperience: calculateLevelExperience(number),
+		ReqExperience: modifiers.CalculateHeroLevelExperience(number),
 		Next:          nextLevel,
 	}
 
 	return level
-}
-
-func calculateLevelExperience(num int) int {
-	i := (num - 1) * 100
-
-	return i + int(float64(i)*0.2)*(num-1)
 }
