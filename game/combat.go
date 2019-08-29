@@ -14,7 +14,9 @@ func fight(h *entity.Hero, m *entity.Monster, skill string) (string, error) {
 	res := h.UseSkill(skill, m)
 
 	result := res.Message
-	result += fightBack(h, m)
+	if m.IsAlive() {
+		result += fightBack(h, m)
+	}
 
 	return result, nil
 }
