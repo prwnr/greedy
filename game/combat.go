@@ -3,11 +3,10 @@ package game
 import (
 	"errors"
 	"fmt"
-	"swarm/entity/npc"
-	"swarm/entity/player"
+	"swarm/entity"
 )
 
-func fight(h *player.Hero, m *npc.Monster, skill string) (string, error) {
+func fight(h *entity.Hero, m *entity.Monster, skill string) (string, error) {
 	if !m.IsAlive() {
 		return "", errors.New("cannot attack dead monster")
 	}
@@ -20,7 +19,7 @@ func fight(h *player.Hero, m *npc.Monster, skill string) (string, error) {
 	return result, nil
 }
 
-func fightBack(h *player.Hero, m *npc.Monster) string {
+func fightBack(h *entity.Hero, m *entity.Monster) string {
 	monsterHit := m.AttackPower()
 	h.ReduceHealth(monsterHit)
 

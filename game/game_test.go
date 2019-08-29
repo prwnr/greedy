@@ -1,7 +1,7 @@
 package game
 
 import (
-	"swarm/entity/npc"
+	"swarm/entity"
 	"swarm/view"
 	"swarm/world"
 	"testing"
@@ -118,7 +118,7 @@ func Test_isMovement(t *testing.T) {
 func TestGame_countKill(t *testing.T) {
 	go assertViewChannelReceived(t)
 	g := NewGame()
-	m := npc.NewMonster(3)
+	m := entity.NewMonster(3)
 	g.countKill(m)
 
 	if g.KillsCount != 1 {

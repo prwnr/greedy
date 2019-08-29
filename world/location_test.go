@@ -1,7 +1,7 @@
 package world
 
 import (
-	"swarm/entity/player"
+	"swarm/entity"
 	"testing"
 )
 
@@ -26,7 +26,7 @@ func TestLocationRender(t *testing.T) {
 
 	t.Run("render location with hero", func(t *testing.T) {
 		l := NewLocation(1, 1)
-		h := player.NewHero(0, 0)
+		h := entity.NewHero(0, 0)
 		l.PlaceHero(h)
 
 		got := l.RenderPlaces()
@@ -119,7 +119,7 @@ func TestLocationWithHero(t *testing.T) {
 
 	t.Run("placing a hero on location", func(t *testing.T) {
 		l := NewLocation(2, 1) // created with 1 monster, 3 spots left
-		h := player.NewHero(0, 1)
+		h := entity.NewHero(0, 1)
 
 		l.PlaceHero(h)
 
@@ -129,7 +129,7 @@ func TestLocationWithHero(t *testing.T) {
 
 	t.Run("changing hero place", func(t *testing.T) {
 		l := NewLocation(2, 1) // created with 1 monster, 3 spots left
-		h := player.NewHero(0, 1)
+		h := entity.NewHero(0, 1)
 
 		l.PlaceHero(h)
 

@@ -1,4 +1,4 @@
-package player
+package entity
 
 import (
 	"fmt"
@@ -98,7 +98,7 @@ func (s *HealingSkill) Cast(target Killable) Result {
 	}
 
 	healAmount := healingSkillBaseAmount * s.Hero.level.Number
-	s.Hero.Entity.Health += healAmount
+	s.Hero.Health += healAmount
 	s.Hero.mana -= s.ManaCost()
 
 	r.Message = fmt.Sprintf("Hero health restored by %d.", healAmount)
@@ -138,7 +138,7 @@ func (s *BasicAttackSkill) Cast(target Killable) Result {
 		r.Message = "Cannot use skill, still recharging."
 		return r
 	}
-	r.Power = common.RandomMinNumber(s.Hero.Entity.AttackPower()-5, s.Hero.Entity.AttackPower())
+	r.Power = common.RandomMinNumber(s.Hero.AttackPower()-5, s.Hero.AttackPower())
 	if target != nil {
 		target.ReduceHealth(r.Power)
 		r.Message = fmt.Sprintf("You hit monster for %d damage using basic attack, monster has %d HP left \r\n", r.Power, target.GetHealth())
@@ -183,7 +183,7 @@ func (s *HeavyAttackSkill) Cast(target Killable) Result {
 		return r
 	}
 
-	r.Power = common.RandomMinNumber(s.Hero.Entity.AttackPower()-5, s.Hero.Entity.AttackPower())
+	r.Power = common.RandomMinNumber(s.Hero.AttackPower()-5, s.Hero.AttackPower())
 	r.Power += int(float64(r.Power) * heavyAttackBasePower)
 	if target != nil {
 		target.ReduceHealth(r.Power)

@@ -2,7 +2,7 @@ package main
 
 import (
 	"log"
-	"swarm/entity/player"
+	"swarm/entity"
 	"swarm/game"
 	"swarm/view"
 	"time"
@@ -24,7 +24,7 @@ func main() {
 			select {
 			case <-view.UIChange:
 				ui.Render(g.View.All()...)
-			case <-player.RechargeSkill:
+			case <-entity.RechargeSkill:
 				g.View.UpdateSkillBar(g.Hero.Skills())
 				ui.Render(g.View.SkillsBar)
 			case <-end:

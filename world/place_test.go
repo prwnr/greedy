@@ -2,8 +2,7 @@ package world
 
 import (
 	"strings"
-	"swarm/entity/npc"
-	"swarm/entity/player"
+	"swarm/entity"
 	"testing"
 )
 
@@ -22,7 +21,7 @@ func TestPlaceHero(t *testing.T) {
 
 	t.Run("can set new Hero on place", func(t *testing.T) {
 		p := Place{}
-		h := &player.Hero{}
+		h := &entity.Hero{}
 
 		p.SetHero(h)
 
@@ -31,7 +30,7 @@ func TestPlaceHero(t *testing.T) {
 
 	t.Run("can remove all Hero from place", func(t *testing.T) {
 		p := Place{}
-		h := &player.Hero{}
+		h := &entity.Hero{}
 
 		p.SetHero(h)
 		assertHasHero(t, &p)
@@ -44,7 +43,7 @@ func TestPlaceHero(t *testing.T) {
 func TestPlaceMonsters(t *testing.T) {
 	t.Run("can add new Monster on place", func(t *testing.T) {
 		p := Place{}
-		m := npc.NewMonster(1)
+		m := entity.NewMonster(1)
 
 		p.AddMonster(m)
 
@@ -61,7 +60,7 @@ func TestPlaceMonsters(t *testing.T) {
 func TestPlaceRendering(t *testing.T) {
 	t.Run("renders Hero from place", func(t *testing.T) {
 		p := Place{}
-		h := player.NewHero(0, 0)
+		h := entity.NewHero(0, 0)
 
 		p.SetHero(h)
 
@@ -82,7 +81,7 @@ func TestPlaceRendering(t *testing.T) {
 
 	t.Run("renders Monster on place", func(t *testing.T) {
 		p := Place{}
-		m := npc.NewMonster(1)
+		m := entity.NewMonster(1)
 		p.AddMonster(m)
 
 		got := p.Render()
@@ -93,8 +92,8 @@ func TestPlaceRendering(t *testing.T) {
 
 	t.Run("renders Hero and Monster on place", func(t *testing.T) {
 		p := Place{}
-		m := npc.NewMonster(1)
-		h := player.NewHero(0, 0)
+		m := entity.NewMonster(1)
+		h := entity.NewHero(0, 0)
 
 		p.SetHero(h)
 		p.AddMonster(m)

@@ -3,8 +3,7 @@ package world
 import (
 	"strings"
 	"swarm/common"
-	"swarm/entity/npc"
-	"swarm/entity/player"
+	"swarm/entity"
 	"swarm/modifiers"
 )
 
@@ -16,7 +15,7 @@ type Location struct {
 	Requirements levelRequirements
 }
 
-// Level of the location
+// HeroLevel of the location
 func (l *Location) Level() int {
 	return l.level
 }
@@ -77,12 +76,12 @@ func (l *Location) PlaceMonsters(num int) {
 }
 
 // PlaceHero on location (based on his current position)
-func (l *Location) PlaceHero(h *player.Hero) {
+func (l *Location) PlaceHero(h *entity.Hero) {
 	l.Places[h.Position.Y][h.Position.X].SetHero(h)
 }
 
 // GetHeroPlace returns place on which hero currently is
-func (l *Location) GetHeroPlace(h *player.Hero) *Place {
+func (l *Location) GetHeroPlace(h *entity.Hero) *Place {
 	return &l.Places[h.Position.Y][h.Position.X]
 }
 
@@ -113,9 +112,9 @@ func placeMonster(l *Location) bool {
 	}
 
 	level := common.RandomMinNumber(l.level+0, l.level+2)
-	m := npc.NewMonster(level)
+	m := entity.NewMonster(level)
 	if l.level > 1 {
-		m.SetLook(npc.LevelLook[level-l.level+1])
+		m.SetLook(entity.LevelLook[level-l.level+1])
 	}
 
 	place.AddMonster(m)

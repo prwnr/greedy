@@ -3,8 +3,7 @@ package game
 import (
 	"fmt"
 	"swarm/common"
-	"swarm/entity/npc"
-	"swarm/entity/player"
+	"swarm/entity"
 	"swarm/modifiers"
 	"swarm/view"
 	"swarm/world"
@@ -16,7 +15,7 @@ type Game struct {
 	//View represents game UI
 	View *view.View
 	//Hero is a player
-	Hero *player.Hero
+	Hero *entity.Hero
 	//CurrentLocation is a location/map on which Hero is walking
 	CurrentLocation *world.Location
 	KillsCount      int
@@ -48,7 +47,7 @@ func NewGame() Game {
 	loadConfig(&g)
 
 	g.View = view.NewView()
-	g.Hero = player.NewHero(0, g.Config.LocationSize-1)
+	g.Hero = entity.NewHero(0, g.Config.LocationSize-1)
 	g.CurrentLocation = world.NewLocation(g.Config.LocationSize, 1)
 
 	g.CurrentLocation.PlaceHero(g.Hero)
@@ -178,7 +177,7 @@ func isMovement(action string) bool {
 	return common.SliceContains(move, action)
 }
 
-func (g *Game) countKill(m *npc.Monster) {
+func (g *Game) countKill(m *entity.Monster) {
 	if m.Render() == g.CurrentLocation.Requirements.MonsterTarget {
 		g.KillsCount++
 

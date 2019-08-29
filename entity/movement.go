@@ -1,4 +1,4 @@
-package player
+package entity
 
 // MoveUp lowers Y position
 func (h *Hero) MoveUp() {

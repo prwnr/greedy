@@ -2,21 +2,20 @@ package game
 
 import (
 	"regexp"
-	"swarm/entity/npc"
-	"swarm/entity/player"
+	"swarm/entity"
 	"testing"
 )
 
 //TODO improve code to get it testable
 func Test_fight(t *testing.T) {
 	type args struct {
-		h     *player.Hero
-		m     *npc.Monster
+		h     *entity.Hero
+		m     *entity.Monster
 		skill string
 	}
 
-	deadMonster := func() *npc.Monster {
-		m := npc.NewMonster(1)
+	deadMonster := func() *entity.Monster {
+		m := entity.NewMonster(1)
 		m.ReduceHealth(100)
 		return m
 	}
@@ -28,17 +27,17 @@ func Test_fight(t *testing.T) {
 		wantErr bool
 	}{
 		{"attacks 1st level monster",
-			args{h: player.NewHero(0, 0), m: npc.NewMonster(1), skill: "1"},
+			args{h: entity.NewHero(0, 0), m: entity.NewMonster(1), skill: "1"},
 			"You hit monster for \\d* damage using basic attack, monster has \\d* HP left \r\nMonster hit you for \\d* damage. \\d* HP left \r\n",
 			false,
 		},
 		{"attacks 3rd level monster",
-			args{h: player.NewHero(0, 0), m: npc.NewMonster(2), skill: "1"},
+			args{h: entity.NewHero(0, 0), m: entity.NewMonster(2), skill: "1"},
 			"You hit monster for \\d* damage using basic attack, monster has \\d* HP left \r\nMonster hit you for \\d* damage. \\d* HP left \r\n",
 			false,
 		},
 		{"cannot attack dead monster",
-			args{h: player.NewHero(0, 0), m: deadMonster(), skill: "1"},
+			args{h: entity.NewHero(0, 0), m: deadMonster(), skill: "1"},
 			"",
 			true,
 		},
@@ -62,7 +61,7 @@ func Test_fight(t *testing.T) {
 
 func assertRechargeChannelReceived(t *testing.T) {
 	for {
-		res := <-player.RechargeSkill
+		res := <-entity.RechargeSkill
 		if res != true {
 			t.Errorf("RechargeSkill channel is not true")
 		}

@@ -1,23 +1,22 @@
 package world
 
 import (
-	"swarm/entity/npc"
-	"swarm/entity/player"
+	"swarm/entity"
 )
 
 // Place is a single element on a Location
 type Place struct {
-	hero    *player.Hero
-	monster *npc.Monster
+	hero    *entity.Hero
+	monster *entity.Monster
 }
 
 // SetHero puts a Hero on a Place
-func (p *Place) SetHero(h *player.Hero) {
+func (p *Place) SetHero(h *entity.Hero) {
 	p.hero = h
 }
 
 // AddMonster to a place
-func (p *Place) AddMonster(m *npc.Monster) {
+func (p *Place) AddMonster(m *entity.Monster) {
 	p.monster = m
 }
 
@@ -41,12 +40,12 @@ func (p *Place) RemoveMonster() {
 }
 
 // GetHero returns stands on Place
-func (p *Place) GetHero() *player.Hero {
+func (p *Place) GetHero() *entity.Hero {
 	return p.hero
 }
 
 // GetMonster returns monster from the place
-func (p *Place) GetMonster() *npc.Monster {
+func (p *Place) GetMonster() *entity.Monster {
 	return p.monster
 }
 

@@ -1,8 +1,7 @@
-package player
+package entity
 
 import (
 	"regexp"
-	"swarm/entity"
 	"testing"
 	"time"
 )
@@ -129,7 +128,7 @@ func TestHeroAttackSkill(t *testing.T) {
 			"You hit monster for \\d* damage using basic attack, monster has \\d* HP left \r\n",
 			10,
 			15,
-			&entity.Entity{
+			&Entity{
 				Health: 100,
 				Attack: 1,
 			},
@@ -139,7 +138,7 @@ func TestHeroAttackSkill(t *testing.T) {
 			"You hit monster for \\d* damage using heavy attack, monster has \\d* HP left \r\n",
 			24,
 			36,
-			&entity.Entity{
+			&Entity{
 				Health: 100,
 				Attack: 1,
 			},
