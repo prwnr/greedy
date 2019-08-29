@@ -211,7 +211,7 @@ func TestHeroGainExperience(t *testing.T) {
 func TestHeroLevelUp(t *testing.T) {
 	assertHeroLevel := func(h *Hero, want int) {
 		if h.level.Number != want {
-			t.Errorf("Hero should be at level %d, got %d", want, h.level.Number)
+			t.Errorf("hero should be at level %d, got %d", want, h.level.Number)
 		}
 	}
 
@@ -236,7 +236,7 @@ func TestHeroLevelUp(t *testing.T) {
 		assertHeroLevel(h, modifiers.HeroMaxLevel)
 
 		if !h.HasMaxLevel() {
-			t.Error("Hero should be at max level")
+			t.Error("hero should be at max level")
 		}
 	})
 }
@@ -251,11 +251,11 @@ func TestHeroRegenerate(t *testing.T) {
 
 	h.Regenerate()
 	if h.GetHealth() != wantHP {
-		t.Errorf("Hero health at %d, want %d", h.GetHealth(), wantHP)
+		t.Errorf("hero health at %d, want %d", h.GetHealth(), wantHP)
 	}
 
 	if h.mana != wantMana {
-		t.Errorf("Hero health at %d, want %d", h.GetHealth(), wantMana)
+		t.Errorf("hero health at %d, want %d", h.GetHealth(), wantMana)
 	}
 }
 

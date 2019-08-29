@@ -33,7 +33,7 @@ func (e *Entity) IsAlive() bool {
 	return e.Health > 0
 }
 
-// Hero a newborn hero
+// hero a newborn hero
 type Hero struct {
 	//Position of the hero
 	Position Position
@@ -46,7 +46,7 @@ type Hero struct {
 	maxHealth int
 	maxMana   int
 	//Skills
-	skills map[string]Castable
+	skills map[string]castable
 }
 
 // NewHero creates new hero struct
@@ -64,10 +64,10 @@ func NewHero(x, y int) *Hero {
 	h.Position.X = x
 	h.Position.Y = y
 
-	h.skills = make(map[string]Castable)
-	h.skills["1"] = NewBasicAttackSkill(h)
-	h.skills["2"] = NewHealingSkill(h)
-	h.skills["3"] = NewHeavyAttackSkill(h)
+	h.skills = make(map[string]castable)
+	h.skills["1"] = newBasicAttackSkill(h)
+	h.skills["2"] = newHealingSkill(h)
+	h.skills["3"] = newHeavyAttackSkill(h)
 
 	return h
 }
@@ -81,7 +81,7 @@ func (h *Hero) AttackPower() int {
 func (h *Hero) UseSkill(num string, target Killable) Result {
 	var res Result
 	if skill, ok := h.skills[num]; ok {
-		res = skill.Cast(target)
+		res = skill.cast(target)
 		return res
 	}
 
@@ -138,7 +138,7 @@ func (h *Hero) GetStats() [][]string {
 	}
 
 	return [][]string{
-		{"HeroLevel", fmt.Sprintf("%d", h.level.Number)},
+		{"Level", fmt.Sprintf("%d", h.level.Number)},
 		{"Health", fmt.Sprintf("%d/%d", h.Entity.Health, h.maxHealth)},
 		{"Mana", fmt.Sprintf("%d/%d", h.mana, h.maxMana)},
 		{"Attack", fmt.Sprintf("%d", h.Entity.Attack)},
@@ -146,7 +146,7 @@ func (h *Hero) GetStats() [][]string {
 	}
 }
 
-// Skills return all available hero skills with their cool downs
+// Skills returns all available hero skills with their cool downs and mana cost
 func (h *Hero) Skills() [][]string {
 	var order []string
 	for k := range h.skills {
@@ -155,15 +155,16 @@ func (h *Hero) Skills() [][]string {
 
 	sort.Strings(order)
 
-	var names, cds []string
+	var names, cds, mana []string
 	for _, i := range order {
 		s := h.skills[i]
-		names = append(names, fmt.Sprintf("%s:%s", i, s.GetName()))
-		cds = append(cds, fmt.Sprintf("%.1f", s.CurrentCoolDown()))
+		names = append(names, fmt.Sprintf("%s:%s", i, s.getName()))
+		mana = append(mana, fmt.Sprintf("%d mana", s.manaCost()))
+		cds = append(cds, fmt.Sprintf("%.1f", s.currentCoolDown()))
 	}
 
 	return [][]string{
-		names, cds,
+		names, mana, cds,
 	}
 }
 
@@ -235,7 +236,7 @@ func (m Monster) Render() string {
 // GetStats returns current hero statistics
 func (m *Monster) GetStats() [][]string {
 	return [][]string{
-		{"MonsterLevel", fmt.Sprintf("%d", m.level.Number)},
+		{"Level", fmt.Sprintf("%d", m.level.Number)},
 		{"Health", fmt.Sprintf("%d/%d", m.GetHealth(), m.maxHealth)},
 		{"Attack", fmt.Sprintf("%d", m.AttackPower())},
 	}

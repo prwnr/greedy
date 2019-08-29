@@ -7,10 +7,10 @@ import (
 )
 
 func TestSkillStartCoolDown(t *testing.T) {
-	s := &Skill{
-		Name:       "Foo",
+	s := &skill{
+		name:       "Foo",
 		internalCD: 0,
-		CoolDown:   0.5,
+		coolDown:   0.5,
 	}
 
 	go assertRechargeChannelReceived(t)
@@ -37,13 +37,13 @@ func TestSkillCurrentCoolDown(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			s := &Skill{
-				Name:       tt.fields.Name,
+			s := &skill{
+				name:       tt.fields.Name,
 				internalCD: tt.fields.CoolDown,
 			}
 			go assertRechargeChannelReceived(t)
-			if got := s.CurrentCoolDown(); got != tt.want {
-				t.Errorf("CurrentCoolDown() = %v, want %v", got, tt.want)
+			if got := s.currentCoolDown(); got != tt.want {
+				t.Errorf("currentCoolDown() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -64,12 +64,12 @@ func TestSkillGetName(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			s := &Skill{
-				Name:       tt.fields.Name,
+			s := &skill{
+				name:       tt.fields.Name,
 				internalCD: tt.fields.CoolDown,
 			}
-			if got := s.GetName(); got != tt.want {
-				t.Errorf("GetName() = %v, want %v", got, tt.want)
+			if got := s.getName(); got != tt.want {
+				t.Errorf("getName() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -93,8 +93,8 @@ func TestHeroHealingSkill(t *testing.T) {
 		wantMessage string
 		wantHealth  int
 	}{
-		{"hero heals himself", args{heroHealth: 10, heroMana: 10}, "Hero health restored by 5.", 15},
-		{"hero cannot over heal", args{heroHealth: 150, heroMana: 10}, "Hero health restored by 0.", 150},
+		{"hero heals himself", args{heroHealth: 10, heroMana: 10}, "hero health restored by 5.", 15},
+		{"hero cannot over heal", args{heroHealth: 150, heroMana: 10}, "hero health restored by 0.", 150},
 		{"hero cannot heal when mana is too low", args{heroHealth: 10, heroMana: 0}, "Mana is too low.", 10},
 	}
 	for _, tt := range tests {
@@ -103,11 +103,11 @@ func TestHeroHealingSkill(t *testing.T) {
 			h.Health = tt.args.heroHealth
 			h.mana = tt.args.heroMana
 
-			s := NewHealingSkill(h)
+			s := newHealingSkill(h)
 
 			go assertRechargeChannelReceived(t)
-			if got := s.Cast(nil); got.Message != tt.wantMessage {
-				t.Errorf("Cast() = %v, want %v", got, tt.wantMessage)
+			if got := s.cast(nil); got.Message != tt.wantMessage {
+				t.Errorf("cast() = %v, want %v", got, tt.wantMessage)
 			}
 			assertHealthEquals(t, tt.wantHealth, h.Health)
 		})
@@ -158,12 +158,12 @@ func TestHeroAttackSkill(t *testing.T) {
 			go assertRechargeChannelReceived(t)
 			got := h.UseSkill(tt.skill, tt.target)
 			if got.Power < tt.wantMinPower || got.Power > tt.wantMaxPower {
-				t.Errorf("Cast() power = %v, want power between %v, %v", got.Power, tt.wantMinPower, tt.wantMaxPower)
+				t.Errorf("cast() power = %v, want power between %v, %v", got.Power, tt.wantMinPower, tt.wantMaxPower)
 			}
 
 			res, err := regexp.MatchString(tt.wantMessage, got.Message)
 			if res != true || err != nil {
-				t.Errorf("Cast() = %v, want %v", got.Message, tt.wantMessage)
+				t.Errorf("cast() = %v, want %v", got.Message, tt.wantMessage)
 			}
 		})
 	}

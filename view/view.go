@@ -35,11 +35,11 @@ func NewView() *View {
 	view.SkillsBar = widgets.NewTable()
 	view.SkillsBar.Title = "Skill bar"
 	view.SkillsBar.Rows = [][]string{{""}}
-	view.SkillsBar.SetRect(0, 23, 65, 28)
+	view.SkillsBar.SetRect(0, 23, 65, 30)
 
 	view.CombatLog = widgets.NewParagraph()
 	view.CombatLog.Title = "Combat log"
-	view.CombatLog.SetRect(0, 28, 65, 34)
+	view.CombatLog.SetRect(0, 30, 65, 37)
 
 	view.Hero = widgets.NewTable()
 	view.Hero.Title = "My hero"
