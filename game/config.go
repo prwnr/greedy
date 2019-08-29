@@ -16,8 +16,8 @@ type Config struct {
 func loadConfig(g *Game) {
 	jsonFile, err := os.Open("config.json")
 	config := Config{
-		MonsterSpawn:     10,
-		MonstersSpawnNum: 1,
+		MonsterSpawn:     5,
+		MonstersSpawnNum: 2,
 		LocationSize:     18,
 	}
 
