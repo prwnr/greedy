@@ -3,19 +3,17 @@ package entity
 import (
 	"fmt"
 	"swarm/common"
+	"sync"
 	"time"
 )
 
 // skill structure
 type skill struct {
-	//name of the skill displayed in UI
-	name string
-	//coolDown defined skill CD
-	coolDown float64
-	//internalCD as current cool down after skill use
+	name       string
+	coolDown   float64
 	internalCD float64
-	//hero which used the skill
-	hero *Hero
+	hero       *Hero
+	m          sync.Mutex
 }
 
 // RechargeSkill channel that triggers when skill CD is started
@@ -29,7 +27,9 @@ func (s *skill) startCoolDown() {
 	go func() {
 		ticker := time.NewTicker(time.Millisecond * 500)
 		for range ticker.C {
+			s.m.Lock()
 			s.internalCD -= 0.5
+			s.m.Unlock()
 			RechargeSkill <- true
 			if s.internalCD <= 0 {
 				ticker.Stop()
@@ -46,6 +46,8 @@ func (s *skill) getName() string {
 
 // currentCoolDown returns internal recharge cool down
 func (s *skill) currentCoolDown() float64 {
+	s.m.Lock()
+	defer s.m.Unlock()
 	return s.internalCD
 }
 
@@ -139,7 +141,7 @@ func (s *basicAttackSkill) cast(target Killable) Result {
 		r.Message = "Cannot use skill, still recharging."
 		return r
 	}
-	r.Power = common.RandomMinNumber(s.hero.AttackPower()-5, s.hero.AttackPower())
+	r.Power = s.hero.AttackPower()
 	if target != nil {
 		target.ReduceHealth(r.Power)
 		r.Message = fmt.Sprintf("You hit monster for %d damage using basic attack, monster has %d HP left \r\n", r.Power, target.GetHealth())

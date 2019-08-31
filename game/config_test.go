@@ -29,8 +29,8 @@ func TestLoadConfig(t *testing.T) {
 		want args
 	}{
 		{"loads default config", &Game{}, args{
-			MonsterSpawn:     10,
-			MonstersSpawnNum: 1,
+			MonsterSpawn:     5,
+			MonstersSpawnNum: 2,
 			LocationSize:     18,
 		}},
 	}

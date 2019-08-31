@@ -16,10 +16,10 @@ func TestSkillStartCoolDown(t *testing.T) {
 	go assertRechargeChannelReceived(t)
 	s.startCoolDown()
 
-	assertNumberEquals(t, 0.5, s.internalCD)
+	assertNumberEquals(t, 0.5, s.currentCoolDown())
 
 	time.Sleep(time.Millisecond * 600)
-	assertNumberEquals(t, 0, s.internalCD)
+	assertNumberEquals(t, 0, s.currentCoolDown())
 }
 
 func TestSkillCurrentCoolDown(t *testing.T) {
@@ -126,7 +126,7 @@ func TestHeroAttackSkill(t *testing.T) {
 		{"hero basic attack",
 			"1",
 			"You hit monster for \\d* damage using basic attack, monster has \\d* HP left \r\n",
-			10,
+			12,
 			15,
 			&Entity{
 				Health: 100,
