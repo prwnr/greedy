@@ -5,6 +5,7 @@ import (
 	"swarm/common"
 	"swarm/entity"
 	"swarm/modifiers"
+	"sync"
 )
 
 //Location of the game
@@ -98,8 +99,13 @@ func (l *Location) HasFreePlace() bool {
 	return false
 }
 
+var mut sync.Mutex
+
 func placeMonster(l *Location) bool {
+	mut.Lock()
+
 	if !l.HasFreePlace() {
+		mut.Unlock()
 		return false
 	}
 
@@ -108,6 +114,7 @@ func placeMonster(l *Location) bool {
 
 	place := &l.Places[x][y]
 	if place.IsOccupied() || place.GetHero() != nil {
+		mut.Unlock()
 		return placeMonster(l)
 	}
 
@@ -119,6 +126,7 @@ func placeMonster(l *Location) bool {
 
 	place.AddMonster(m)
 
+	mut.Unlock()
 	return true
 }
 

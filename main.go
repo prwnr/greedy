@@ -4,7 +4,6 @@ import (
 	"log"
 	"swarm/entity"
 	"swarm/game"
-	"swarm/view"
 	"time"
 
 	ui "github.com/gizak/termui/v3"
@@ -22,11 +21,10 @@ func main() {
 	go func() {
 		for {
 			select {
-			case <-view.UIChange:
-				ui.Render(g.View.All()...)
 			case <-entity.RechargeSkill:
-				g.View.UpdateSkillBar(g.Hero.Skills())
-				ui.Render(g.View.SkillsBar)
+				g.RunLocked(func() {
+					g.View.UpdateSkillBar(g.Hero.Skills())
+				})
 			case <-end:
 				return
 			}
@@ -61,13 +59,17 @@ func main() {
 				end <- true
 				return
 			default:
-				g.PlayerAction(e.ID)
-				g.UpdateView()
+				g.RunLocked(func() {
+					g.PlayerAction(e.ID)
+					g.UpdateView()
+				})
 			}
 		case <-tick:
 			second++
-			g.Cycle(second)
-			g.UpdateView()
+			g.RunLocked(func() {
+				g.Cycle(second)
+				g.UpdateView()
+			})
 		}
 	}
 }

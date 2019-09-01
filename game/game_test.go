@@ -68,7 +68,7 @@ func TestGame_ReleasingSwarm(t *testing.T) {
 	g := NewGame()
 	g.CurrentLocation = world.NewLocation(2, 1)
 
-	g.ReleaseSwarm()
+	g.releaseSwarm()
 	if g.CurrentLocation.HasFreePlace() {
 		t.Errorf("current location should be full of monsters")
 	}
@@ -130,8 +130,8 @@ func TestGame_TimeIsOver(t *testing.T) {
 	g := NewGame()
 	g.TimeElapsed = 200
 
-	if got := g.TimeIsOver(); got != true {
-		t.Errorf("TimeIsOver() = %v, want true", got)
+	if got := g.timeIsOver(); got != true {
+		t.Errorf("timeIsOver() = %v, want true", got)
 	}
 }
 
@@ -139,13 +139,13 @@ func TestGame_CheckHeroStatus(t *testing.T) {
 	go assertViewChannelReceived(t)
 	g := NewGame()
 
-	g.CheckHeroStatus()
+	g.checkHeroStatus()
 	if g.Over {
 		t.Error("game cant be over when here is still alive")
 	}
 
 	g.Hero.ReduceHealth(1000)
-	g.CheckHeroStatus()
+	g.checkHeroStatus()
 	if !g.Over {
 		t.Error("game should be over when here is dead")
 	}
@@ -163,6 +163,6 @@ func TestGame_NextLocation(t *testing.T) {
 
 	assertLocationLevel(t, g.CurrentLocation.Level(), 1)
 
-	g.NextLocation()
+	g.nextLocation()
 	assertLocationLevel(t, g.CurrentLocation.Level(), 2)
 }

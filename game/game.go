@@ -7,6 +7,7 @@ import (
 	"swarm/modifiers"
 	"swarm/view"
 	"swarm/world"
+	"sync"
 	"time"
 )
 
@@ -25,6 +26,7 @@ type Game struct {
 	//Over defines if hero is defeated or time ran our
 	Over          bool
 	swarmReleased bool
+	M             sync.Mutex
 }
 
 const (
@@ -55,6 +57,13 @@ func NewGame() Game {
 	return g
 }
 
+// RunLocked executes passed function in a locked mutex
+func (g *Game) RunLocked(f func()) {
+	g.M.Lock()
+	defer g.M.Unlock()
+	f()
+}
+
 // InitViews sets up first UI data.
 func (g *Game) InitViews() {
 	g.View.UpdateLocationTitle(g.CurrentLocation.Level())
@@ -69,26 +78,26 @@ func (g *Game) InitViews() {
 
 // Cycle in game
 func (g *Game) Cycle(second int64) {
-	if g.CurrentLocation.Requirements.KillsCount == g.KillsCount && !g.TimeIsOver() {
-		g.NextLocation()
+	if g.CurrentLocation.Requirements.KillsCount == g.KillsCount && !g.timeIsOver() {
+		g.nextLocation()
 	}
 
-	if !g.TimeIsOver() {
+	if !g.timeIsOver() {
 		g.TimeElapsed++
-		g.UpdateGoal()
+		g.updateGoal()
 	}
 
-	if g.TimeIsOver() && !g.swarmReleased {
-		go g.ReleaseSwarm()
+	if g.timeIsOver() && !g.swarmReleased {
+		go g.releaseSwarm()
 		g.swarmReleased = true
 	}
 
 	if second%g.Config.MonsterSpawn == 0 {
-		go g.CurrentLocation.PlaceMonsters(g.Config.MonstersSpawnNum)
+		g.CurrentLocation.PlaceMonsters(g.Config.MonstersSpawnNum)
 	}
 
 	if second%modifiers.HeroRegenTimeout == 0 {
-		go g.Hero.Regenerate()
+		g.Hero.Regenerate()
 	}
 }
 
@@ -125,8 +134,7 @@ func (g *Game) PlayerAction(action string) {
 			}
 		}
 
-		g.CheckHeroStatus()
-
+		g.checkHeroStatus()
 		return
 	}
 
@@ -148,7 +156,7 @@ func (g *Game) PlayerAction(action string) {
 		}
 	}
 
-	g.CheckHeroStatus()
+	g.checkHeroStatus()
 
 	currPlace.RemoveHero()
 	g.CurrentLocation.PlaceHero(g.Hero)
@@ -181,32 +189,32 @@ func (g *Game) countKill(m *entity.Monster) {
 	if m.Render() == g.CurrentLocation.Requirements.MonsterTarget {
 		g.KillsCount++
 
-		g.UpdateGoal()
+		g.updateGoal()
 	}
 }
 
-// UpdateGoal triggers view update on location goal
-func (g *Game) UpdateGoal() {
+// updateGoal triggers view update on location goal
+func (g *Game) updateGoal() {
 	t := g.CurrentLocation.Requirements.TimeFrame - g.TimeElapsed
 	k := g.CurrentLocation.Requirements.KillsCount - g.KillsCount
 	g.View.UpdateGoal(g.CurrentLocation.Requirements.MonsterTarget, k, t)
 }
 
-// TimeIsOver checks if location time passed
-func (g *Game) TimeIsOver() bool {
+// timeIsOver checks if location time passed
+func (g *Game) timeIsOver() bool {
 	return g.CurrentLocation.Requirements.TimeFrame-g.TimeElapsed <= 0
 }
 
-// CheckHeroStatus if its alive. If not, game is over
-func (g *Game) CheckHeroStatus() {
+// checkHeroStatus if its alive. If not, game is over
+func (g *Game) checkHeroStatus() {
 	if !g.Hero.IsAlive() {
 		g.View.UpdateCombatLog("Hero died. Press 'q' to quit or 'r' to restart.")
 		g.Over = true
 	}
 }
 
-// ReleaseSwarm monsters
-func (g *Game) ReleaseSwarm() {
+// releaseSwarm monsters
+func (g *Game) releaseSwarm() {
 	t := time.NewTicker(time.Millisecond * 20)
 	for {
 		select {
@@ -221,8 +229,8 @@ func (g *Game) ReleaseSwarm() {
 	}
 }
 
-// NextLocation advance
-func (g *Game) NextLocation() {
+// nextLocation advance
+func (g *Game) nextLocation() {
 	g.CurrentLocation = world.NewLocation(g.Config.LocationSize, g.CurrentLocation.Level()+1)
 	g.View.UpdateLocationTitle(g.CurrentLocation.Level())
 	g.KillsCount = 0

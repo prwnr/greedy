@@ -22,84 +22,91 @@ var UIChange = make(chan bool)
 
 // NewView returns new predefined views
 func NewView() *View {
-	var view = View{}
+	var v = View{}
 
-	view.Goal = widgets.NewParagraph()
-	view.Goal.Title = "Your goal"
-	view.Goal.SetRect(0, 0, 65, 3)
+	v.Goal = widgets.NewParagraph()
+	v.Goal.Title = "Your goal"
+	v.Goal.SetRect(0, 0, 65, 3)
 
-	view.Location = widgets.NewParagraph()
-	view.Location.Title = "Location"
-	view.Location.SetRect(0, 3, 38, 23)
+	v.Location = widgets.NewParagraph()
+	v.Location.Title = "Location"
+	v.Location.SetRect(0, 3, 38, 23)
 
-	view.SkillsBar = widgets.NewTable()
-	view.SkillsBar.Title = "Skill bar"
-	view.SkillsBar.Rows = [][]string{{""}}
-	view.SkillsBar.SetRect(0, 23, 65, 30)
+	v.SkillsBar = widgets.NewTable()
+	v.SkillsBar.Title = "Skill bar"
+	v.SkillsBar.Rows = [][]string{{""}}
+	v.SkillsBar.SetRect(0, 23, 65, 30)
 
-	view.CombatLog = widgets.NewParagraph()
-	view.CombatLog.Title = "Combat log"
-	view.CombatLog.SetRect(0, 30, 65, 37)
+	v.CombatLog = widgets.NewParagraph()
+	v.CombatLog.Title = "Combat log"
+	v.CombatLog.SetRect(0, 30, 65, 37)
 
-	view.Hero = widgets.NewTable()
-	view.Hero.Title = "My hero"
-	view.Hero.Rows = [][]string{{""}}
-	view.Hero.SetRect(40, 3, 65, 14)
+	v.Hero = widgets.NewTable()
+	v.Hero.Title = "My hero"
+	v.Hero.Rows = [][]string{{""}}
+	v.Hero.SetRect(40, 3, 65, 14)
 
-	view.Monster = widgets.NewTable()
-	view.Monster.Title = ""
-	view.Monster.Rows = [][]string{{""}}
-	view.Monster.SetRect(40, 14, 65, 23)
+	v.Monster = widgets.NewTable()
+	v.Monster.Title = ""
+	v.Monster.Rows = [][]string{{""}}
+	v.Monster.SetRect(40, 14, 65, 23)
 
-	return &view
+	ui.Render(v.All()...)
+
+	return &v
 }
 
 // UpdateLocation view change
 func (v *View) UpdateLocation(text string) {
 	v.Location.Text = text
-	UIChange <- true
+	renderView(v.Location)
 }
 
 // UpdateLocationTitle view change
 func (v *View) UpdateLocationTitle(level int) {
 	v.Location.Title = "Location level " + fmt.Sprintf("%d", level)
-	UIChange <- true
+	renderView(v.Location)
 }
 
 func (v *View) UpdateGoal(monster string, kills, time int) {
 	v.Goal.Text = fmt.Sprintf("Kill %d [%s] monsters in %d seconds", kills, monster, time)
-	UIChange <- true
+	renderView(v.Goal)
 }
 
 // UpdateCombatLog view change
 func (v *View) UpdateCombatLog(text string) {
 	v.CombatLog.Text = text
-	UIChange <- true
+	renderView(v.CombatLog)
 }
 
 // UpdateHeroStats view change
 func (v *View) UpdateHeroStats(stats [][]string) {
 	v.Hero.Rows = stats
-	UIChange <- true
+	renderView(v.Hero)
 }
 
 // UpdateSkillBar view change
 func (v *View) UpdateSkillBar(skills [][]string) {
 	v.SkillsBar.Rows = skills
+	renderView(v.SkillsBar)
 }
 
 // ShowMonster creates new view for current monster
 func (v *View) ShowMonster(stats [][]string) {
 	v.Monster.Title = "Monster"
 	v.Monster.Rows = stats
-	UIChange <- true
+	renderView(v.Monster)
 }
 
 // HideMonster removes monster from view
 func (v *View) HideMonster() {
 	v.Monster.Title = ""
 	v.Monster.Rows = [][]string{{""}}
-	UIChange <- true
+	renderView(v.Monster)
+}
+
+func renderView(v ui.Drawable) {
+	ui.Render(v)
 }
 
 // All return all available view parts
