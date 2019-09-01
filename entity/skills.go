@@ -22,7 +22,10 @@ var RechargeSkill = make(chan bool)
 
 // starts internal skill recharge cool down
 func (s *skill) startCoolDown() {
+	s.m.Lock()
 	s.internalCD = s.coolDown
+	s.m.Unlock()
+
 	RechargeSkill <- true
 	go func() {
 		ticker := time.NewTicker(time.Millisecond * 500)
@@ -30,13 +33,30 @@ func (s *skill) startCoolDown() {
 			s.m.Lock()
 			s.internalCD -= 0.5
 			s.m.Unlock()
+
 			RechargeSkill <- true
+
+			s.m.Lock()
 			if s.internalCD <= 0 {
 				ticker.Stop()
+				s.m.Unlock()
 				return
 			}
+			s.m.Unlock()
 		}
 	}()
+}
+
+// canCast skill only when internal cool down is at 0
+func (s *skill) canCast() bool {
+	s.m.Lock()
+	defer s.m.Unlock()
+
+	if s.internalCD > 0 {
+		return false
+	}
+
+	return true
 }
 
 // name return skill name
@@ -55,7 +75,7 @@ func (s *skill) currentCoolDown() float64 {
 type castable interface {
 	getName() string
 	currentCoolDown() float64
-	cast(target Killable) Result
+	cast(target killable) Result
 	manaCost() int
 }
 
@@ -82,9 +102,9 @@ func newHealingSkill(h *Hero) *healingSkill {
 }
 
 // cast uses a skill and starts its cool down
-func (s *healingSkill) cast(target Killable) Result {
+func (s *healingSkill) cast(target killable) Result {
 	var r Result
-	if s.internalCD > 0 {
+	if !s.canCast() {
 		r.Message = "Cannot use skill, still recharging."
 		return r
 	}
@@ -119,8 +139,8 @@ type basicAttackSkill struct {
 	skill
 }
 
-//Killable contract for skills that are target health
-type Killable interface {
+//killable contract for skills that are target health
+type killable interface {
 	ReduceHealth(amount int)
 	GetHealth() int
 }
@@ -135,9 +155,9 @@ func newBasicAttackSkill(h *Hero) *basicAttackSkill {
 }
 
 // cast uses a skill and starts its cool down
-func (s *basicAttackSkill) cast(target Killable) Result {
+func (s *basicAttackSkill) cast(target killable) Result {
 	var r Result
-	if s.internalCD > 0 {
+	if !s.canCast() {
 		r.Message = "Cannot use skill, still recharging."
 		return r
 	}
@@ -174,9 +194,9 @@ func newHeavyAttackSkill(h *Hero) *heavyAttackSkill {
 }
 
 // cast uses a skill and starts its cool down
-func (s *heavyAttackSkill) cast(target Killable) Result {
+func (s *heavyAttackSkill) cast(target killable) Result {
 	var r Result
-	if s.internalCD > 0 {
+	if !s.canCast() {
 		r.Message = "Cannot use skill, still recharging."
 		return r
 	}

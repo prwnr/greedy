@@ -109,6 +109,7 @@ func TestHeroHealingSkill(t *testing.T) {
 			if got := s.cast(nil); got.Message != tt.wantMessage {
 				t.Errorf("cast() = %v, want %v", got, tt.wantMessage)
 			}
+			_ = s.cast(nil)
 			assertHealthEquals(t, tt.wantHealth, h.Health)
 		})
 	}
@@ -121,7 +122,7 @@ func TestHeroAttackSkill(t *testing.T) {
 		wantMessage  string
 		wantMinPower int
 		wantMaxPower int
-		target       Killable
+		target       killable
 	}{
 		{"hero basic attack",
 			"1",
@@ -136,7 +137,7 @@ func TestHeroAttackSkill(t *testing.T) {
 		{"hero heavy attack",
 			"3",
 			"You hit monster for \\d* damage using heavy attack, monster has \\d* HP left \r\n",
-			24,
+			21,
 			36,
 			&Entity{
 				Health: 100,
@@ -146,7 +147,7 @@ func TestHeroAttackSkill(t *testing.T) {
 		{"hero cant attack nil target",
 			"1",
 			"",
-			10,
+			12,
 			15,
 			nil,
 		},

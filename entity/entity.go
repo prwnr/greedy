@@ -78,7 +78,7 @@ func (h *Hero) AttackPower() int {
 }
 
 // UseSkill selects and casts skill
-func (h *Hero) UseSkill(num string, target Killable) Result {
+func (h *Hero) UseSkill(num string, target killable) Result {
 	var res Result
 	if skill, ok := h.skills[num]; ok {
 		res = skill.cast(target)
