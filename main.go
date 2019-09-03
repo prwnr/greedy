@@ -45,9 +45,23 @@ func main() {
 			}
 
 			if e.ID == "r" {
-				g = game.NewGame()
-				g.Over = false
+				g.RunLocked(func() {
+					g.Reset()
+					g.UpdateView()
+				})
 			}
+
+			continue
+		}
+
+		if g.SwarmReleased {
+			g.RunLocked(func() {
+				if !g.CurrentLocation.HasFreePlace() {
+					g.EndGame("Swarm released. You lost.")
+				}
+
+				g.UpdateView()
+			})
 
 			continue
 		}

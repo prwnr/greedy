@@ -25,7 +25,7 @@ type Game struct {
 	Config Config
 	//Over defines if hero is defeated or time ran our
 	Over          bool
-	swarmReleased bool
+	SwarmReleased bool
 	M             sync.Mutex
 }
 
@@ -47,14 +47,32 @@ func NewGame() Game {
 	g := Game{}
 
 	loadConfig(&g)
+	g.prepareGame()
 
+	return g
+}
+
+// Reset game to default state
+func (g *Game) Reset() {
+	g.prepareGame()
+
+	g.SwarmReleased = false
+	g.TimeElapsed = 0
+	g.KillsCount = 0
+	g.Over = false
+}
+
+func (g *Game) prepareGame() {
 	g.View = view.NewView()
 	g.Hero = entity.NewHero(0, g.Config.LocationSize-1)
 	g.CurrentLocation = world.NewLocation(g.Config.LocationSize, 1)
-
 	g.CurrentLocation.PlaceHero(g.Hero)
+}
 
-	return g
+// EndGame with output  log message
+func (g *Game) EndGame(s string) {
+	g.View.UpdateCombatLog(s + " Press 'q' to quit or 'r' to restart.")
+	g.Over = true
 }
 
 // RunLocked executes passed function in a locked mutex
@@ -87,9 +105,9 @@ func (g *Game) Cycle(second int64) {
 		g.updateGoal()
 	}
 
-	if g.timeIsOver() && !g.swarmReleased {
+	if g.timeIsOver() && !g.SwarmReleased {
 		go g.releaseSwarm()
-		g.swarmReleased = true
+		g.SwarmReleased = true
 	}
 
 	if second%g.Config.MonsterSpawn == 0 {
@@ -208,8 +226,7 @@ func (g *Game) timeIsOver() bool {
 // checkHeroStatus if its alive. If not, game is over
 func (g *Game) checkHeroStatus() {
 	if !g.Hero.IsAlive() {
-		g.View.UpdateCombatLog("Hero died. Press 'q' to quit or 'r' to restart.")
-		g.Over = true
+		g.EndGame("Hero died")
 	}
 }
 
@@ -219,12 +236,17 @@ func (g *Game) releaseSwarm() {
 	for {
 		select {
 		case <-t.C:
+			g.M.Lock()
 			g.CurrentLocation.PlaceMonsters(1)
 			g.View.UpdateLocation(g.CurrentLocation.RenderPlaces())
+
 			if !g.CurrentLocation.HasFreePlace() {
 				t.Stop()
+				g.M.Unlock()
 				return
 			}
+
+			g.M.Unlock()
 		}
 	}
 }
