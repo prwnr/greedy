@@ -10,6 +10,7 @@ import (
 // skill structure
 type skill struct {
 	name       string
+	key        string
 	coolDown   float64
 	internalCD float64
 	hero       *Hero
@@ -64,6 +65,11 @@ func (s *skill) getName() string {
 	return s.name
 }
 
+// key bind
+func (s *skill) getKey() string {
+	return s.key
+}
+
 // currentCoolDown returns internal recharge cool down
 func (s *skill) currentCoolDown() float64 {
 	s.m.Lock()
@@ -74,6 +80,7 @@ func (s *skill) currentCoolDown() float64 {
 // castable defines skill
 type castable interface {
 	getName() string
+	getKey() string
 	currentCoolDown() float64
 	cast(target killable) Result
 	manaCost() int
@@ -96,6 +103,7 @@ const healingSkillBaseAmount = 5
 func newHealingSkill(h *Hero) *healingSkill {
 	return &healingSkill{skill{
 		name:     "Heal",
+		key:      "2",
 		coolDown: 4,
 		hero:     h,
 	}}
@@ -149,6 +157,7 @@ type killable interface {
 func newBasicAttackSkill(h *Hero) *basicAttackSkill {
 	return &basicAttackSkill{skill{
 		name:     "Attack",
+		key:      "1",
 		coolDown: 0.5,
 		hero:     h,
 	}}
@@ -188,6 +197,7 @@ const heavyAttackBasePower = 1.4
 func newHeavyAttackSkill(h *Hero) *heavyAttackSkill {
 	return &heavyAttackSkill{skill{
 		name:     "Heavy Attack",
+		key:      "3",
 		coolDown: 8,
 		hero:     h,
 	}}

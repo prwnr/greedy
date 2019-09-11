@@ -67,7 +67,6 @@ func NewHero(x, y int) *Hero {
 	h.skills = make(map[string]castable)
 	h.skills["1"] = newBasicAttackSkill(h)
 	h.skills["2"] = newHealingSkill(h)
-	h.skills["3"] = newHeavyAttackSkill(h)
 
 	return h
 }
@@ -168,6 +167,13 @@ func (h *Hero) Skills() [][]string {
 	}
 }
 
+// level requirement => skill
+var newSkills = map[int]func(h *Hero) castable{
+	2: func(h *Hero) castable {
+		return newHeavyAttackSkill(h)
+	},
+}
+
 func (h *Hero) levelUp() {
 	if h.HasMaxLevel() {
 		return
@@ -179,6 +185,13 @@ func (h *Hero) levelUp() {
 	h.Health = h.maxHealth
 	h.maxMana = modifiers.CalculateHeroMana(h.level.Number)
 	h.mana = h.maxMana
+
+	for lev, makeSkill := range newSkills {
+		if lev == h.level.Number {
+			s := makeSkill(h)
+			h.skills[s.getKey()] = s
+		}
+	}
 }
 
 // Position of a hero
