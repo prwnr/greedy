@@ -54,10 +54,10 @@ func main() {
 			continue
 		}
 
-		if g.SwarmReleased {
+		if g.GreedsReleased {
 			g.RunLocked(func() {
 				if !g.CurrentLocation.HasFreePlace() {
-					g.EndGame("Swarm released. You lost.")
+					g.EndGame("Greeds released. You lost.")
 				}
 
 				g.UpdateView()

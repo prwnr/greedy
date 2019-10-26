@@ -24,9 +24,9 @@ type Game struct {
 	//Config for the game
 	Config Config
 	//Over defines if hero is defeated or time ran our
-	Over          bool
-	SwarmReleased bool
-	M             sync.Mutex
+	Over           bool
+	GreedsReleased bool
+	M              sync.Mutex
 }
 
 const (
@@ -56,7 +56,7 @@ func NewGame() Game {
 func (g *Game) Reset() {
 	g.prepareGame()
 
-	g.SwarmReleased = false
+	g.GreedsReleased = false
 	g.TimeElapsed = 0
 	g.KillsCount = 0
 	g.Over = false
@@ -105,9 +105,9 @@ func (g *Game) Cycle(second int64) {
 		g.updateGoal()
 	}
 
-	if g.timeIsOver() && !g.SwarmReleased {
-		go g.releaseSwarm()
-		g.SwarmReleased = true
+	if g.timeIsOver() && !g.GreedsReleased {
+		go g.releaseGreeds()
+		g.GreedsReleased = true
 	}
 
 	if second%g.Config.MonsterSpawn == 0 {
@@ -230,8 +230,8 @@ func (g *Game) checkHeroStatus() {
 	}
 }
 
-// releaseSwarm monsters
-func (g *Game) releaseSwarm() {
+// releaseGreeds monsters
+func (g *Game) releaseGreeds() {
 	t := time.NewTicker(time.Millisecond * 20)
 	for {
 		select {

@@ -63,12 +63,12 @@ func TestWontMoveHeroOutsideLocation(t *testing.T) {
 	}
 }
 
-func TestGame_ReleasingSwarm(t *testing.T) {
+func TestGame_ReleasingGreeds(t *testing.T) {
 	go assertViewChannelReceived(t)
 	g := NewGame()
 	g.CurrentLocation = world.NewLocation(2, 1)
 
-	g.releaseSwarm()
+	g.releaseGreeds()
 	if g.CurrentLocation.HasFreePlace() {
 		t.Errorf("current location should be full of monsters")
 	}
