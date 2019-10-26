@@ -2,9 +2,9 @@ package entity
 
 import (
 	"fmt"
+	"greedy/common"
+	"greedy/modifiers"
 	"sort"
-	"swarm/common"
-	"swarm/modifiers"
 )
 
 // Entity structure

@@ -3,7 +3,7 @@ package game
 import (
 	"errors"
 	"fmt"
-	"swarm/entity"
+	"greedy/entity"
 )
 
 func fight(h *entity.Hero, m *entity.Monster, skill string) (string, error) {

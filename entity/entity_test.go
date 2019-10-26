@@ -2,8 +2,8 @@ package entity
 
 import (
 	"fmt"
+	"greedy/modifiers"
 	"strings"
-	"swarm/modifiers"
 	"testing"
 )
 

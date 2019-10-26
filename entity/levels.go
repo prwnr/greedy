@@ -1,6 +1,6 @@
 package entity
 
-import "swarm/modifiers"
+import "greedy/modifiers"
 
 // HeroLevel of a hero/monster
 type HeroLevel struct {

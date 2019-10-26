@@ -1,4 +1,4 @@
-module swarm
+module greedy
 
 go 1.13
 

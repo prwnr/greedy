@@ -1,7 +1,7 @@
 package world
 
 import (
-	"swarm/entity"
+	"greedy/entity"
 	"testing"
 )
 

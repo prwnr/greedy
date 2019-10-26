@@ -1,9 +1,9 @@
 package game
 
 import (
-	"swarm/entity"
-	"swarm/view"
-	"swarm/world"
+	"greedy/entity"
+	"greedy/view"
+	"greedy/world"
 	"testing"
 )
 

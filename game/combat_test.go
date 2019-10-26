@@ -1,8 +1,8 @@
 package game
 
 import (
+	"greedy/entity"
 	"regexp"
-	"swarm/entity"
 	"testing"
 )
 

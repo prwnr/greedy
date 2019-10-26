@@ -1,10 +1,10 @@
 package world
 
 import (
+	"greedy/common"
+	"greedy/entity"
+	"greedy/modifiers"
 	"strings"
-	"swarm/common"
-	"swarm/entity"
-	"swarm/modifiers"
 	"sync"
 )
 

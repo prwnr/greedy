@@ -1,9 +1,9 @@
 package main
 
 import (
+	"greedy/entity"
+	"greedy/game"
 	"log"
-	"swarm/entity"
-	"swarm/game"
 	"time"
 
 	ui "github.com/gizak/termui/v3"

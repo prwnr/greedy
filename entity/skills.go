@@ -2,7 +2,7 @@ package entity
 
 import (
 	"fmt"
-	"swarm/common"
+	"greedy/common"
 	"sync"
 	"time"
 )

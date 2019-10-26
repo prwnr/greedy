@@ -2,11 +2,11 @@ package game
 
 import (
 	"fmt"
-	"swarm/common"
-	"swarm/entity"
-	"swarm/modifiers"
-	"swarm/view"
-	"swarm/world"
+	"greedy/common"
+	"greedy/entity"
+	"greedy/modifiers"
+	"greedy/view"
+	"greedy/world"
 	"sync"
 	"time"
 )
